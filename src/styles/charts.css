@@ -1,0 +1,19 @@
+.recharts-wrapper {
+  outline: none !important;
+}
+
+.recharts-wrapper * {
+  outline: none !important;
+}
+
+.recharts-bar {
+  outline: none !important;
+}
+
+.recharts-area {
+  outline: none !important;
+}
+
+.recharts-pie {
+  outline: none !important;
+}

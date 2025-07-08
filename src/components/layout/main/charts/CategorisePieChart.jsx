@@ -8,6 +8,9 @@ const data = [
   { name: "Animals", value: 10 },
   { name: "Services", value: 5 },
   { name: "Real Estate", value: 5 },
+  { name: "Real Estate", value: 23 },
+  { name: "Real Estate", value: 56 },
+  { name: "Real Estate", value: 34 },
 ];
 
 const COLORS = ["var(--primary-color)", "#88B8DF", "#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
