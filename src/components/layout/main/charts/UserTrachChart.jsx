@@ -46,8 +46,8 @@ function UserTrachChart() {
         <Area
           type="monotone"
           dataKey="users"
-          stroke="#185F90"
-          fill="#185F90"
+          stroke="var(--primary-color)"
+          fill="var(--primary-color)"
         />
         <Legend />
       </AreaChart>

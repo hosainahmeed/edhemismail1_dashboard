@@ -42,7 +42,7 @@ function PerMonthListingChart() {
         <YAxis />
         <Tooltip />
         <Legend />
-        <Bar width={40} radius={[8, 8, 0, 0]} dataKey="active" fill="#185F90" name="Active" />
+        <Bar width={40} radius={[8, 8, 0, 0]} dataKey="active" fill="var(--primary-color)" name="Active" />
         <Bar width={40} radius={[8, 8, 0, 0]} dataKey="cancelled" fill="#88B8DF" name="Cancelled" />
       </BarChart>
     </ResponsiveContainer>

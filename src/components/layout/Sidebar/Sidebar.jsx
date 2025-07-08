@@ -51,7 +51,7 @@ const SideBar = () => {
   };
 
   return (
-    <div className="flex bg-[#0C469D]/10 pt-3 flex-col h-full">
+    <div className="flex bg-[var(--primary-color)]/10 pt-3 flex-col h-full">
       {/* Scrollable menu items */}
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         <div className="px-4 space-y-1 pb-4">
@@ -87,8 +87,8 @@ const SideBar = () => {
                   to={item.link || "#"}
                   className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
                     isActive
-                      ? "bg-[#0C469D] text-white shadow-md"
-                      : "text-black hover:bg-[#0C469D]/60 hover:text-white"
+                      ? "bg-[var(--primary-color)] text-white shadow-md"
+                      : "text-black hover:bg-[var(--primary-color)]/60 hover:text-white"
                   }`}
                   onClick={(e) => {
                     if (item.children) {
@@ -131,8 +131,8 @@ const SideBar = () => {
                           to={child.link}
                           className={`block px-3 py-2 text-sm rounded-md transition-colors duration-150 ${
                             selectedKey === child.key
-                              ? "bg-[#0C469D] text-white shadow-md"
-                              : "text-black hover:bg-[#0C469D]/60 hover:text-white"
+                              ? "bg-[var(--primary-color)] text-white shadow-md"
+                              : "text-black hover:bg-[var(--primary-color)]/60 hover:text-white"
                           }`}
                           onClick={() => {
                             setSelectedKey(child.key);
@@ -154,7 +154,7 @@ const SideBar = () => {
       <div className="p-4 ">
         <button
           onClick={handleLogout}
-          className="w-full cursor-pointer flex items-center justify-center px-4 py-2.5 text-sm font-medium bg-[#0C469D]  rounded-lg transition-colors duration-200"
+          className="w-full cursor-pointer flex items-center justify-center px-4 py-2.5 text-sm font-medium bg-[var(--primary-color)]  rounded-lg transition-colors duration-200"
         >
           <IoIosLogOut className="w-5 !text-white h-5 mr-2" />
           <span className="text-white">Log Out</span>

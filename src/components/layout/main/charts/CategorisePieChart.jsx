@@ -10,7 +10,7 @@ const data = [
   { name: "Real Estate", value: 5 },
 ];
 
-const COLORS = ["#185F90", "#88B8DF", "#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = ["var(--primary-color)", "#88B8DF", "#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const RADIAN = Math.PI / 180;
 const renderCustomizedLabel = ({
