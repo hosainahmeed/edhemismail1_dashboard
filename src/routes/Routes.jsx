@@ -1,37 +1,71 @@
-import React from "react";
-import { createBrowserRouter } from "react-router-dom";
-import MainLayout from "../components/MainLayout";
-import Dashboard from "../components/layout/main/Dashboard";
-import Login from "../features/auth/ui/Login";
-import ForgetPassword from "../features/auth/ui/ForgetPassword";
-import Verification from "../features/auth/ui/Verification";
-import ResetPassword from "../features/auth/ui/ResetPassword";
-
+import React from 'react';
+import { createBrowserRouter } from 'react-router-dom';
+import MainLayout from '../components/MainLayout';
+import Dashboard from '../components/layout/main/Dashboard';
+import AllUser from '../features/user/ui/AllUser';
+import AllListing from '../features/listing/AllListing';
+import Terms from '../features/setting/Terms';
+import PrivacyPolicy from '../features/setting/PrivacyPolicy';
+import Profile from '../features/setting/Profile';
+import ForgetPassword from '../features/auth/ForgetPassword';
+import Login from '../features/auth/Login';
+import Support from '../features/support/Support';
+import Verification from '../features/auth/Verification';
+import ResetPassword from '../features/auth/ResetPassword';
+import Category from '../features/category/Category';
 export const Routes = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <MainLayout />,
     children: [
       {
-        path: "/",
+        path: '/',
         element: <Dashboard />,
+      },
+      {
+        path: '/user/all-user',
+        element: <AllUser />,
+      },
+      {
+        path: '/listings',
+        element: <AllListing />,
+      },
+      {
+        path: '/support',
+        element: <Support />,
+      },
+      {
+        path: '/category',
+        element: <Category />,
+      },
+      {
+        path: '/dashboard/Settings/Terms&Condition',
+        element: <Terms />,
+      },
+      {
+        path: '/dashboard/Settings/PrivacyPolicy',
+        element: <PrivacyPolicy />,
+      },
+      {
+        path: '/dashboard/Settings/profile',
+        element: <Profile />,
       },
     ],
   },
   {
-    path: "/auth",
+    path: '/auth',
     element: <Login />,
   },
   {
-    path: "/auth/forgot-password",
+    path: '/auth/forgot-password',
     element: <ForgetPassword />,
   },
   {
-    path: "/auth/varification",
+    path: '/auth/varification',
     element: <Verification />,
   },
   {
-    path: "/auth/reset-password",
+    path: '/auth/reset-password',
     element: <ResetPassword />,
   },
 ]);

@@ -85,7 +85,7 @@ const SideBar = () => {
               <div key={item.key} className="mb-1">
                 <Link
                   to={item.link || "#"}
-                  className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+                  className={`flex items-center px-4 py-3 text-base font-medium rounded-lg transition-all duration-200 ${
                     isActive
                       ? "bg-[var(--primary-color)] text-white shadow-md"
                       : "text-black hover:bg-[var(--primary-color)]/60 hover:text-white"
@@ -129,7 +129,7 @@ const SideBar = () => {
                         <Link
                           key={child.key}
                           to={child.link}
-                          className={`block px-3 py-2 text-sm rounded-md transition-colors duration-150 ${
+                          className={`block px-3 py-2 text-base rounded-md transition-colors duration-150 ${
                             selectedKey === child.key
                               ? "bg-[var(--primary-color)] text-white shadow-md"
                               : "text-black hover:bg-[var(--primary-color)]/60 hover:text-white"

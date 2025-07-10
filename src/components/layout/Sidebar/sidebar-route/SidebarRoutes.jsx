@@ -15,18 +15,7 @@ export const SidebarRoutes = [
     key: 'userManagement',
     label: 'User management',
     icon: FaRegCircleUser,
-    children: [
-      {
-        key: 'all-user',
-        label: 'All User',
-        link: '/user/all-user',
-      },
-      {
-        key: 'sign-up-request',
-        label: 'Sign Up Request',
-        link: '/user/sign-up-request',
-      },
-    ],
+    link: '/user/all-user',
   },
   {
     key: 'listings',
