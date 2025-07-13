@@ -58,7 +58,7 @@ function Support() {
   ];
 
   const handleSearch = (value) => {
-    console.log(value);
+    console.log(value.target.value);
   };
 
   const handleDateChange = (value) => {
@@ -67,12 +67,11 @@ function Support() {
 
   return (
     <div className="support-container">
-      <h2>Support Users</h2>
       <div className="flex mb-4 items-center gap-2 justify-end">
-        <Input.Search
+        <Input
           placeholder="Search users"
-          onSearch={handleSearch}
-          enterButton="Search"
+          onChange={handleSearch}
+          prefix={<SearchOutlined />} 
           size="large"
           className="max-w-[400px]"
         />
@@ -83,6 +82,7 @@ function Support() {
           onChange={handleDateChange}
         />
       </div>
+      <h2 className="text-2xl font-bold mb-4">Support</h2>
       <Table
         bordered
         columns={columns}

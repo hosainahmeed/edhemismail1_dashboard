@@ -25,9 +25,20 @@ export const SidebarRoutes = [
   },
   {
     key: 'category',
-    label: 'Category',
+    label: 'Category Management',
     icon: BiCategory,
-    link: '/category',
+    children: [
+      {
+        key: 'category',
+        label: 'Category',
+        link: '/category',
+      },
+      {
+        key: 'subCategory',
+        label: 'Sub Category',
+        link: '/sub-category',
+      },
+    ],
   },
   {
     key: 'support',

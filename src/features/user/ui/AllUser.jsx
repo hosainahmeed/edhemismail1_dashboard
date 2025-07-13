@@ -1,6 +1,6 @@
 import React from "react";
 import { Table, Button, Space, message, Input } from "antd";
-import { LockOutlined, UnlockOutlined } from "@ant-design/icons";
+import { LockOutlined, SearchOutlined, UnlockOutlined } from "@ant-design/icons";
 
 function AllUser() {
   const [userData, setUserData] = React.useState([
@@ -92,10 +92,10 @@ function AllUser() {
   return (
     <div className="p-4">
       <div className="flex items-center gap-2 justify-end">
-        <Input.Search
+        <Input
           placeholder="Search users"
-          onSearch={handleSearch}
-          enterButton="Search"
+          onChange={handleSearch}
+          prefix={<SearchOutlined />}
           size="large"
           className="mb-4 max-w-[400px]"
         />
