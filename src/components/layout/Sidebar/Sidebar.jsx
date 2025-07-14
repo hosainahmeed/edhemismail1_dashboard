@@ -1,7 +1,7 @@
 import React from "react";
 import { FaChevronRight } from "react-icons/fa";
 import { IoIosLogOut } from "react-icons/io";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { SidebarRoutes } from "./sidebar-route/SidebarRoutes";
 
@@ -9,6 +9,7 @@ const SideBar = () => {
   const [selectedKey, setSelectedKey] = useState("dashboard");
   const [expandedKeys, setExpandedKeys] = useState([]);
   const location = useLocation();
+  const navigate = useNavigate();
   const contentRef = useRef({});
 
   useEffect(() => {
@@ -46,8 +47,9 @@ const SideBar = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    window.location.reload();
+    // localStorage.removeItem("accessToken");
+    // window.location.reload();
+    navigate('/auth/login');
   };
 
   return (

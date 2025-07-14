@@ -68,7 +68,7 @@ export const Routes = createBrowserRouter([
     ],
   },
   {
-    path: '/auth',
+    path: '/auth/login',
     element: <Login />,
   },
   {

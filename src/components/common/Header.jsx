@@ -2,7 +2,7 @@ import React from 'react';
 import { Avatar, Badge, Button, Dropdown, Image, Menu } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../../assets/brand.png';
+import logo from '../../assets/brand-black.png';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 
 function Header() {
@@ -19,7 +19,7 @@ function Header() {
 
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
-    navigate('/login');
+    navigate('/auth/login');
   };
 
 
@@ -46,7 +46,7 @@ function Header() {
     </Menu>
   );
   return (
-    <div className="px-10 !z-[999] shadow-md mb-1 bg-[var(--secondary-color)] h-16 flex justify-between items-center">
+    <div className="px-10 !z-[999] shadow-md mb-1 bg-white h-16 flex justify-between items-center">
       <div className="flex items-center gap-2  font-semibold">
         <img className="h-14" src={logo} alt="" />
       </div>
@@ -60,7 +60,7 @@ function Header() {
             />
           </Dropdown>
           <div>
-            <h1 className="text-sm font-normal text-white mb-0">{user?.fullName}</h1>
+            <h1 className="text-sm font-normal text-black mb-0">{user?.fullName}</h1>
             <div className="rounded-md flex items-center justify-center px-1 text-sm font-normal py-1 leading-3 bg-[#DCFCE7]">
               {user?.role}
             </div>
