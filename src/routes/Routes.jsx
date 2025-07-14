@@ -13,6 +13,9 @@ import Support from '../features/support/Support';
 import Verification from '../features/auth/Verification';
 import ResetPassword from '../features/auth/ResetPassword';
 import Category from '../features/category/Category';
+import FAQ from '../features/setting/FAQ';
+import HomeSlides from '../features/home-slides/HomeSlides';
+import FeaturedListings from '../features/listing/FeaturedListings';
 export const Routes = createBrowserRouter([
   {
     path: '/',
@@ -27,6 +30,10 @@ export const Routes = createBrowserRouter([
         element: <AllUser />,
       },
       {
+        path: '/home-slides',
+        element: <HomeSlides />,
+      },
+      {
         path: '/listings',
         element: <AllListing />,
       },
@@ -39,6 +46,10 @@ export const Routes = createBrowserRouter([
         element: <Category />,
       },
       {
+        path: '/featured-listings',
+        element: <FeaturedListings />,
+      },
+      {
         path: '/dashboard/Settings/Terms&Condition',
         element: <Terms />,
       },
@@ -49,6 +60,10 @@ export const Routes = createBrowserRouter([
       {
         path: '/dashboard/Settings/profile',
         element: <Profile />,
+      },
+      {
+        path: '/dashboard/Settings/faq',
+        element: <FAQ />,
       },
     ],
   },

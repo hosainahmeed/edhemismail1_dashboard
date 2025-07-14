@@ -3,6 +3,7 @@ import { MdDashboard, MdOutlineSupport } from 'react-icons/md';
 import { FaCog, FaList } from 'react-icons/fa';
 import { FaRegCircleUser } from 'react-icons/fa6';
 import { BiCategory } from 'react-icons/bi';
+import { PiSlidersHorizontalBold } from 'react-icons/pi';
 
 export const SidebarRoutes = [
   {
@@ -10,6 +11,12 @@ export const SidebarRoutes = [
     label: 'Dashboard',
     icon: MdDashboard,
     link: '/',
+  },
+  {
+    key: 'home-slides',
+    label: 'Home Slides',
+    icon: PiSlidersHorizontalBold,
+    link: '/home-slides',
   },
   {
     key: 'userManagement',
@@ -21,7 +28,18 @@ export const SidebarRoutes = [
     key: 'listings',
     label: 'Listings',
     icon: FaList,
-    link: '/listings',
+    children: [
+      {
+        key: 'listings',
+        label: 'Listings',
+        link: '/listings',
+      },
+      {
+        key: 'featured-listings',
+        label: 'Featured /Urgent ',
+        link: '/featured-listings',
+      },
+    ],
   },
   {
     key: 'category',
@@ -61,6 +79,11 @@ export const SidebarRoutes = [
         key: 'privacy',
         label: 'Privacy Policy',
         link: '/dashboard/Settings/PrivacyPolicy',
+      },
+      {
+        key: 'faq',
+        label: 'FAQ',
+        link: '/dashboard/Settings/faq',
       },
       {
         key: 'profile',

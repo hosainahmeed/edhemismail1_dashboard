@@ -28,7 +28,7 @@ const months = [
 function PerMonthListingChart() {
   return (
     <div className="w-full h-[350px]">
-      <h1 className="text-2xl font-bold mb-4">Per Month Listing</h1>
+      <h1 className="text-2xl font-bold mb-4">Per Year Listing</h1>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={months}
