@@ -31,7 +31,7 @@ export const SidebarRoutes = [
     children: [
       {
         key: 'listings',
-        label: 'Listings',
+        label: 'Requested Listings',
         link: '/listings',
       },
       {
