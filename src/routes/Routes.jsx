@@ -16,6 +16,7 @@ import Category from '../features/category/Category';
 import FAQ from '../features/setting/FAQ';
 import HomeSlides from '../features/home-slides/HomeSlides';
 import FeaturedListings from '../features/listing/FeaturedListings';
+import SubCategory from '../features/sub-category/SubCategory';
 export const Routes = createBrowserRouter([
   {
     path: '/',
@@ -44,6 +45,10 @@ export const Routes = createBrowserRouter([
       {
         path: '/category',
         element: <Category />,
+      },
+      {
+        path: '/sub-category',
+        element: <SubCategory />,
       },
       {
         path: '/featured-listings',
