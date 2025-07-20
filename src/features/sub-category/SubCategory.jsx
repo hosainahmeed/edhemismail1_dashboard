@@ -1,33 +1,33 @@
-import React, { useState } from 'react';
-import { Form, Input, Modal, Select, Table, message } from 'antd';
-import { Button, Space, Tag } from 'antd';
+import React, { useState } from "react";
+import { Form, Input, Modal, Select, Table, message } from "antd";
+import { Button, Space, Tag } from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
   PlusOutlined,
   MinusCircleOutlined,
-} from '@ant-design/icons';
+} from "@ant-design/icons";
 
 function SubCategory() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [data, setData] = useState([
     {
-      key: '1',
-      name: 'Electronics',
-      category: 'Electronics',
-      subCategory: ['Mobile', 'Laptop', 'Camera'],
+      key: "1",
+      name: "Electronics",
+      category: "Electronics",
+      subCategory: ["Mobile", "Laptop", "Camera"],
     },
     {
-      key: '2',
-      name: 'Fashion',
-      category: 'Fashion',
-      subCategory: ['Clothing', 'Footwear', 'Accessories'],
+      key: "2",
+      name: "Fashion",
+      category: "Fashion",
+      subCategory: ["Clothing", "Footwear", "Accessories"],
     },
     {
-      key: '3',
-      name: 'Home & Living',
-      category: 'Home & Living',
-      subCategory: ['Furniture', 'Decor', 'Kitchenware'],
+      key: "3",
+      name: "Home & Living",
+      category: "Home & Living",
+      subCategory: ["Furniture", "Decor", "Kitchenware"],
     },
   ]);
 
@@ -48,7 +48,7 @@ function SubCategory() {
           : item
       );
       setData(newData);
-      message.success('Sub Category updated successfully!');
+      message.success("Sub Category updated successfully!");
     } else {
       const newKey = Date.now().toString();
       const newEntry = {
@@ -58,7 +58,7 @@ function SubCategory() {
         subCategory: values.subCategory,
       };
       setData([...data, newEntry]);
-      message.success('Sub Category added successfully!');
+      message.success("Sub Category added successfully!");
     }
     form.resetFields();
     setIsModalVisible(false);
@@ -68,10 +68,10 @@ function SubCategory() {
 
   const handleDelete = (key) => {
     Modal.confirm({
-      title: 'Are you sure you want to delete this entry?',
+      title: "Are you sure you want to delete this entry?",
       onOk: () => {
         setData((prevData) => prevData.filter((item) => item.key !== key));
-        message.success('Deleted successfully');
+        message.success("Deleted successfully");
       },
     });
   };
@@ -88,19 +88,19 @@ function SubCategory() {
 
   const columns = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
     },
     {
-      title: 'Category',
-      dataIndex: 'category',
-      key: 'category',
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
     },
     {
-      title: 'Sub Category',
-      dataIndex: 'subCategory',
-      key: 'subCategory',
+      title: "Sub Category",
+      dataIndex: "subCategory",
+      key: "subCategory",
       render: (text, record) => (
         <Space wrap>
           {record.subCategory.map((item, index) => (
@@ -112,14 +112,14 @@ function SubCategory() {
       ),
     },
     {
-      title: 'Action',
-      dataIndex: 'action',
-      key: 'action',
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
       render: (_, record) => (
         <Space>
           <Button
             icon={<EditOutlined />}
-            type="primary"
+            className="!bg-[var(--primary-color)] !text-white"
             onClick={() => handleEdit(record)}
           >
             Edit
@@ -147,7 +147,7 @@ function SubCategory() {
             setEditingKey(null);
           }}
           icon={<PlusOutlined />}
-          type="primary"
+          className="!bg-[var(--primary-color)] !text-white"
         >
           Add
         </Button>
@@ -157,7 +157,7 @@ function SubCategory() {
       <Table columns={columns} dataSource={data} />
 
       <Modal
-        title={editMode ? 'Edit Sub Category' : 'Add Sub Category'}
+        title={editMode ? "Edit Sub Category" : "Add Sub Category"}
         open={isModalVisible}
         onCancel={() => {
           setIsModalVisible(false);
@@ -166,11 +166,16 @@ function SubCategory() {
         }}
         footer={null}
       >
-        <Form form={form} layout="vertical" onFinish={handleAdd}>
+        <Form
+          requiredMark={false}
+          form={form}
+          layout="vertical"
+          onFinish={handleAdd}
+        >
           <Form.Item
             name="category"
             label="Category"
-            rules={[{ required: true, message: 'Please select a category' }]}
+            rules={[{ required: true, message: "Please select a category" }]}
           >
             <Select placeholder="Select a category">
               <Select.Option value="Electronics">Electronics</Select.Option>
@@ -185,14 +190,14 @@ function SubCategory() {
                 {fields.map(({ key, name, ...restField }) => (
                   <Space
                     key={key}
-                    style={{ display: 'flex', marginBottom: 8 }}
+                    style={{ display: "flex", marginBottom: 8 }}
                     align="baseline"
                   >
                     <Form.Item
                       {...restField}
                       name={name}
                       rules={[
-                        { required: true, message: 'Missing sub category' },
+                        { required: true, message: "Missing sub category" },
                       ]}
                     >
                       <Input placeholder="Sub Category" />
@@ -215,8 +220,12 @@ function SubCategory() {
           </Form.List>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              {editMode ? 'Update' : 'Submit'}
+            <Button
+              className="!bg-[var(--primary-color)] !text-white"
+              htmlType="submit"
+              block
+            >
+              {editMode ? "Update" : "Submit"}
             </Button>
           </Form.Item>
         </Form>
