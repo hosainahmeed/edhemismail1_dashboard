@@ -1,94 +1,104 @@
-import React from 'react';
-import { MdDashboard, MdOutlineSupport } from 'react-icons/md';
-import { FaCog, FaList } from 'react-icons/fa';
-import { FaRegCircleUser } from 'react-icons/fa6';
-import { BiCategory } from 'react-icons/bi';
-import { PiSlidersHorizontalBold } from 'react-icons/pi';
+import React from "react";
+import { MdDashboard, MdOutlineSupport } from "react-icons/md";
+import { FaCog, FaList } from "react-icons/fa";
+import { FaRegCircleUser } from "react-icons/fa6";
+import { BiCategory } from "react-icons/bi";
+import { PiSlidersHorizontalBold } from "react-icons/pi";
 
 export const SidebarRoutes = [
   {
-    key: 'dashboard',
-    label: 'Dashboard',
+    key: "dashboard",
+    label: "Dashboard",
     icon: MdDashboard,
-    link: '/',
+    link: "/",
   },
   {
-    key: 'home-slides',
-    label: 'Home Slides',
+    key: "home-slides",
+    label: "Home Slides",
     icon: PiSlidersHorizontalBold,
-    link: '/home-slides',
+    link: "/home-slides",
   },
   {
-    key: 'userManagement',
-    label: 'User management',
+    key: "userManagement",
+    label: "User management",
     icon: FaRegCircleUser,
-    link: '/user/all-user',
+    link: "/user/all-user",
   },
   {
-    key: 'listings',
-    label: 'Listings',
+    key: "listings",
+    label: "Listings",
     icon: FaList,
     children: [
       {
-        key: 'listings',
-        label: 'Requested Listings',
-        link: '/listings',
+        key: "listings",
+        label: "Pending Listings",
+        link: "/listings",
       },
       {
-        key: 'featured-listings',
-        label: 'Featured /Urgent ',
-        link: '/featured-listings',
+        key: "approved-listings",
+        label: "Approved Listings",
+        link: "/approved-listings",
+      },
+      {
+        key: "rejected-listings",
+        label: "Rejected Listings",
+        link: "/rejected-listings",
+      },
+      {
+        key: "featured-listings",
+        label: "Featured Listings ",
+        link: "/featured-listings",
       },
     ],
   },
   {
-    key: 'category',
-    label: 'Category Management',
+    key: "category",
+    label: "Category Management",
     icon: BiCategory,
     children: [
       {
-        key: 'category',
-        label: 'Category',
-        link: '/category',
+        key: "category",
+        label: "Category",
+        link: "/category",
       },
       {
-        key: 'subCategory',
-        label: 'Sub Category',
-        link: '/sub-category',
+        key: "subCategory",
+        label: "Sub Category",
+        link: "/sub-category",
       },
     ],
   },
   {
-    key: 'support',
-    label: 'Support',
+    key: "support",
+    label: "Support",
     icon: MdOutlineSupport,
-    link: '/support',
+    link: "/support",
   },
   {
-    key: 'settings',
-    label: 'Settings',
+    key: "settings",
+    label: "Settings",
     icon: FaCog,
-    link: '/dashboard/Settings/profile',
+    link: "/dashboard/Settings/profile",
     children: [
       {
-        key: 'terms',
-        label: 'Terms & Condition',
-        link: '/dashboard/Settings/Terms&Condition',
+        key: "terms",
+        label: "Terms & Condition",
+        link: "/dashboard/Settings/Terms&Condition",
       },
       {
-        key: 'privacy',
-        label: 'Privacy Policy',
-        link: '/dashboard/Settings/PrivacyPolicy',
+        key: "privacy",
+        label: "Privacy Policy",
+        link: "/dashboard/Settings/PrivacyPolicy",
       },
       {
-        key: 'faq',
-        label: 'FAQ',
-        link: '/dashboard/Settings/faq',
+        key: "faq",
+        label: "FAQ",
+        link: "/dashboard/Settings/faq",
       },
       {
-        key: 'profile',
-        label: 'Profile',
-        link: '/dashboard/Settings/profile',
+        key: "profile",
+        label: "Profile",
+        link: "/dashboard/Settings/profile",
       },
     ],
   },

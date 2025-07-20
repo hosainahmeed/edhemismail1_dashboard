@@ -13,21 +13,39 @@ function SubCategory() {
   const [data, setData] = useState([
     {
       key: "1",
-      name: "Electronics",
-      category: "Electronics",
-      subCategory: ["Mobile", "Laptop", "Camera"],
+      name: "Vehicles",
+      category: "Vehicles",
+      subCategory: ["Cars", "Motorcycles", "Trucks"],
     },
     {
       key: "2",
-      name: "Fashion",
-      category: "Fashion",
-      subCategory: ["Clothing", "Footwear", "Accessories"],
+      name: "Real Estate",
+      category: "Real Estate",
+      subCategory: ["Apartments", "Houses", "Land"],
     },
     {
       key: "3",
-      name: "Home & Living",
-      category: "Home & Living",
-      subCategory: ["Furniture", "Decor", "Kitchenware"],
+      name: "Job Offers",
+      category: "Job Offers",
+      subCategory: ["IT", "Sales", "Marketing"],
+    },
+    {
+      key: "4",
+      name: "New & Used Products",
+      category: "New & Used Products",
+      subCategory: ["Electronics", "Furniture", "Clothing"],
+    },
+    {
+      key: "5",
+      name: "Animals",
+      category: "Animals",
+      subCategory: ["Pets", "Livestock", "Accessories"],
+    },
+    {
+      key: "6",
+      name: "Services",
+      category: "Services",
+      subCategory: ["Cleaning", "Repair", "Tutoring"],
     },
   ]);
 
@@ -88,11 +106,6 @@ function SubCategory() {
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
       title: "Category",
       dataIndex: "category",
       key: "category",
@@ -104,9 +117,9 @@ function SubCategory() {
       render: (text, record) => (
         <Space wrap>
           {record.subCategory.map((item, index) => (
-            <Tag key={index} color="blue">
-              {item}
-            </Tag>
+            <h1 key={index}>
+              {item},
+            </h1>
           ))}
         </Space>
       ),

@@ -10,66 +10,52 @@ import {
   Space,
 } from "antd";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
+import Vehicles from "../../../public/categorise/car.png";
+import estate from "../../../public/categorise/home.png";
+import job from "../../../public/categorise/bag.png";
+import shope from "../../../public/categorise/shope.png";
+import pet from "../../../public/categorise/pet.png";
+import service from "../../../public/categorise/service.png";
 
 function Category() {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [categories, setCategories] = React.useState([
     {
       key: "1",
-      name: "Electronics",
-      image: "https://picsum.photos/200/200?random=1",
+      name: "Vehicles",
+      image: Vehicles,
     },
     {
       key: "2",
-      name: "Fashion",
-      image: "https://picsum.photos/200/200?random=2",
+      name: "Real Estate",
+      image: estate,
     },
     {
       key: "3",
-      name: "Home & Living",
-      image: "https://picsum.photos/200/200?random=3",
+      name: " Job Offers",
+      image: job,
     },
     {
       key: "4",
-      name: "Sports",
-      image: "https://picsum.photos/200/200?random=4",
+      name: "New & Used Products",
+      image: shope,
     },
     {
       key: "5",
-      name: "Books",
-      image: "https://picsum.photos/200/200?random=5",
+      name: "Animals",
+      image: pet,
     },
     {
       key: "6",
-      name: "Beauty",
-      image: "https://picsum.photos/200/200?random=6",
-    },
-    {
-      key: "7",
-      name: "Toys",
-      image: "https://picsum.photos/200/200?random=7",
-    },
-    {
-      key: "8",
-      name: "Food & Beverages",
-      image: "https://picsum.photos/200/200?random=8",
-    },
-    {
-      key: "9",
-      name: "Automotive",
-      image: "https://picsum.photos/200/200?random=9",
-    },
-    {
-      key: "10",
-      name: "Health & Wellness",
-      image: "https://picsum.photos/200/200?random=10",
+      name: "Services",
+      image: service,
     },
   ]);
   const [form] = Form.useForm();
 
   const columns = [
     {
-      title: "Image",
+      title: "Category Image",
       dataIndex: "image",
       key: "image",
       render: (image) => (
@@ -81,7 +67,7 @@ function Category() {
       ),
     },
     {
-      title: "Name",
+      title: "Category Name",
       dataIndex: "name",
       key: "name",
     },
@@ -176,21 +162,16 @@ function Category() {
         </Button>
       </div>
 
-      <Table
-        columns={columns}
-        dataSource={categories}
-        pagination={{
-          position: ["bottomCenter"],
-          pageSize: 5,
-        }}
-      />
+      <Table columns={columns} dataSource={categories} pagination={false} />
 
       <Modal
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
         width={600}
-        okButtonProps={{ style: { backgroundColor: "#185F90", color: "white" } }}
+        okButtonProps={{
+          style: { backgroundColor: "#185F90", color: "white" },
+        }}
         mask={true}
       >
         <Form
