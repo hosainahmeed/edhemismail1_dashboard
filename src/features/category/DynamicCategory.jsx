@@ -1,4 +1,4 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, PlusCircleFilled } from "@ant-design/icons";
 import {
   Button,
   Form,
@@ -10,63 +10,98 @@ import {
   Upload,
 } from "antd";
 import React from "react";
-import job from "../../../public/categorise/bag.png";
+import { useNavigate, useParams } from 'react-router-dom';
 import Vehicles from "../../../public/categorise/car.png";
-import estate from "../../../public/categorise/home.png";
-import pet from "../../../public/categorise/pet.png";
-import service from "../../../public/categorise/service.png";
-import shope from "../../../public/categorise/shope.png";
-
-
-function Category() {
+const categories = [
+  {
+    _id: "1",
+    name: "Vehicles",
+    image: Vehicles,
+    sub_category: [
+      {
+        _id: "1-1",
+        name: "Cars",
+        sub_category: [
+          {
+            _id: "1-1-1",
+            name: "Sedan",
+            sub_category: [
+              {
+                _id: "1-1-1-1",
+                name: "Electric Sedan",
+                sub_category: [
+                  {
+                    _id: "1-1-1-1-1",
+                    name: "Tesla Model S",
+                    sub_category: [
+                      {
+                        _id: "1-1-1-1-1-1",
+                        name: "2024 Model",
+                        sub_category: []
+                      },
+                      {
+                        _id: "1-1-1-1-1-2",
+                        name: "2025 Model",
+                        sub_category: []
+                      }
+                    ]
+                  },
+                  {
+                    _id: "1-1-1-1-2",
+                    name: "Lucid Air",
+                    sub_category: []
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            _id: "1-1-2",
+            name: "SUV",
+            sub_category: [
+              {
+                _id: "1-1-2-1",
+                name: "Off-Road SUV",
+                sub_category: [
+                  {
+                    _id: "1-1-2-1-1",
+                    name: "Jeep Wrangler",
+                    sub_category: []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        _id: "1-2",
+        name: "Motorcycles",
+        sub_category: [
+          {
+            _id: "1-2-1",
+            name: "Sports Bike",
+            sub_category: [
+              {
+                _id: "1-2-1-1",
+                name: "Yamaha R1",
+                sub_category: []
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+];
+const DynamicCategory = () => {
+  const navigate = useNavigate();
+  let params = useParams()
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [categories, setCategories] = React.useState([
-    {
-      key: "1",
-      name: "Vehicles",
-      image: Vehicles,
-    },
-    {
-      key: "2",
-      name: "Real Estate",
-      image: estate,
-    },
-    {
-      key: "3",
-      name: " Job Offers",
-      image: job,
-    },
-    {
-      key: "4",
-      name: "New & Used Products",
-      image: shope,
-    },
-    {
-      key: "5",
-      name: "Animals",
-      image: pet,
-    },
-    {
-      key: "6",
-      name: "Services",
-      image: service,
-    },
-  ]);
+
   const [form] = Form.useForm();
 
   const columns = [
-    {
-      title: "Category Image",
-      dataIndex: "image",
-      key: "image",
-      render: (image) => (
-        <img
-          src={image}
-          alt="Category"
-          style={{ width: 50, height: 50, objectFit: "cover" }}
-        />
-      ),
-    },
     {
       title: "Category Name",
       dataIndex: "name",
@@ -74,15 +109,28 @@ function Category() {
     },
     {
       title: "Sub Category",
-      dataIndex: "subCategory",
-      key: "subCategory",
-      render: (subCategory) => (
-        <span>
-          {Array.isArray(subCategory)
-            ? subCategory.join(", ")
-            : subCategory}
-        </span>
-      ),
+      dataIndex: "sub_category",
+      key: "sub_category",
+      render: (sub_category) => {
+        return (
+          <>
+            {Array.isArray(sub_category)
+              ? sub_category.map((item) => (
+                <button onClick={() => navigate(`/dynamic-category/${item?._id}`)} style={{ margin: "0 5px" }} className='cursor-pointer'>
+                  {item.name}
+                </button>
+              ))
+              : null}
+            <Button
+              type="primary"
+              style={{ backgroundColor: "#185F90", color: "white" }}
+              icon={<PlusCircleFilled />}
+              onClick={() => handleEdit(record)}
+            />
+          </>
+
+        )
+      },
     },
     {
       title: "Actions",
@@ -120,7 +168,7 @@ function Category() {
           key: Date.now(),
           ...values,
         };
-        setCategories([...categories, newCategory]);
+        // setCategories([...categories, newCategory]);
         message.success("Category created successfully");
         setIsModalOpen(false);
       })
@@ -134,7 +182,7 @@ function Category() {
       title: "Delete Confirmation",
       content: "Are you sure you want to delete this category?",
       onOk: () => {
-        setCategories(categories.filter((category) => category.key !== key));
+        // setCategories(categories.filter((category) => category.key !== key));
         message.success("Category deleted successfully");
       },
     });
@@ -209,4 +257,4 @@ function Category() {
   );
 }
 
-export default Category;
+export default DynamicCategory
