@@ -32,7 +32,7 @@ export const SidebarRoutes = [
       {
         key: "listings",
         label: "Pending Listings",
-        link: "/listings",
+        link: "/pending-listings",
       },
       {
         key: "approved-listings",

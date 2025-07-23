@@ -1,40 +1,41 @@
-import React from 'react';
-import CategorisePieChart from './charts/CategorisePieChart';
-import PerMonthListingChart from './charts/PerMonthListingChart';
-import UserTrachChart from './charts/UserTrachChart';
-import StatusCard from './components/StatusCard';
-import listing from '../../../assets/listing.png';
-import user from '../../../assets/user.png';
-import statusIcon from '../../../assets/statusIcon.png';
-import featured from '../../../assets/featuredIcon.png';
-import approved from '../../../assets/approved.png';
-import AllListing from '../../../features/listing/AllListing';
-import { useLocation } from 'react-router-dom';
+import React from "react";
+import CategorisePieChart from "./charts/CategorisePieChart";
+import PerMonthListingChart from "./charts/PerMonthListingChart";
+import UserTrachChart from "./charts/UserTrachChart";
+import StatusCard from "./components/StatusCard";
+import listing from "../../../assets/listing.png";
+import user from "../../../assets/user.png";
+import statusIcon from "../../../assets/statusIcon.png";
+import featured from "../../../assets/featuredIcon.png";
+import approved from "../../../assets/approved.png";
+import AllListing from "../../../features/listing/PendingListing";
+import { useLocation } from "react-router-dom";
 const Dashboard = () => {
   const location = useLocation();
   const data = [
     {
-      title: 'Total Listings',
+      title: "Total Listings",
       number: 340,
       icon: listing,
     },
     {
-      title: 'Total Users',
+      title: "Total Users",
       number: 120,
       icon: user,
+      link: "/user/all-user",
     },
     {
-      title: 'Pending',
+      title: "Pending",
       number: 45,
       icon: statusIcon,
     },
     {
-      title: 'Approved',
+      title: "Approved",
       number: 213,
       icon: approved,
     },
     {
-      title: 'Featured Listing',
+      title: "Featured Listing",
       number: 213,
       icon: featured,
     },

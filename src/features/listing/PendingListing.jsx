@@ -68,7 +68,7 @@ function AllListing({ location }) {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status) => <Tag>{status}</Tag>,
+      render: (status) => <Tag color="yellow">{status}</Tag>,
     },
     {
       title: "Actions",
@@ -118,7 +118,7 @@ function AllListing({ location }) {
   return (
     <div className="p-4">
       {location !== "/" && (
-        <h1 className="text-2xl font-bold mb-4">All Listings</h1>
+        <h1 className="text-2xl font-bold mb-4">Pending Listings</h1>
       )}
       <Table
         scroll={{ x: 800 }}

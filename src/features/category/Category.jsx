@@ -93,10 +93,6 @@ function Category() {
     },
   ];
 
-  const handleCreate = () => {
-    setIsModalOpen(true);
-  };
-
   const handleCancel = () => {
     setIsModalOpen(false);
     form.resetFields();
@@ -152,14 +148,6 @@ function Category() {
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Category Management</h1>
-        <Button
-          type="primary"
-          style={{ backgroundColor: "#185F90", color: "white" }}
-          icon={<PlusOutlined />}
-          onClick={handleCreate}
-        >
-          Create Category
-        </Button>
       </div>
 
       <Table columns={columns} dataSource={categories} pagination={false} />
