@@ -17,6 +17,7 @@ const Dashboard = () => {
       title: "Total Listings",
       number: 340,
       icon: listing,
+      link: "/",
     },
     {
       title: "Total Users",
@@ -28,16 +29,19 @@ const Dashboard = () => {
       title: "Pending",
       number: 45,
       icon: statusIcon,
+      link: "/pending-listings",
     },
     {
       title: "Approved",
       number: 213,
       icon: approved,
+      link: "/approved-listings",
     },
     {
       title: "Featured Listing",
       number: 213,
       icon: featured,
+      link: "/featured-listings",
     },
   ];
 

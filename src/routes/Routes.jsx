@@ -16,13 +16,13 @@ import FAQ from "../features/setting/FAQ";
 import PrivacyPolicy from "../features/setting/PrivacyPolicy";
 import Profile from "../features/setting/Profile";
 import Terms from "../features/setting/Terms";
-import SubCategory from "../features/sub-category/SubCategory";
 import Support from "../features/support/Support";
 import AllUser from "../features/user/ui/AllUser";
+import PrivateRoute from "./PrivetRoute";
 export const Routes = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: <PrivateRoute><MainLayout /></PrivateRoute>,
     children: [
       {
         path: "/",
@@ -59,10 +59,6 @@ export const Routes = createBrowserRouter([
       {
         path: "/dynamic-category/:categoryId",
         element: <DynamicCategory />,
-      },
-      {
-        path: "/sub-category",
-        element: <SubCategory />,
       },
       {
         path: "/featured-listings",

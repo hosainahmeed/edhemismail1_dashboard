@@ -1,210 +1,197 @@
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Form,
-  Input,
-  message,
-  Modal,
-  Space,
-  Table,
-  Upload,
-} from "antd";
-import React from "react";
-import job from "../../../public/categorise/bag.png";
-import Vehicles from "../../../public/categorise/car.png";
-import estate from "../../../public/categorise/home.png";
-import pet from "../../../public/categorise/pet.png";
-import service from "../../../public/categorise/service.png";
-import shope from "../../../public/categorise/shope.png";
+import { useEffect, useState } from "react";
+import { Form, message } from "antd";
+import { 
+  useCreateCategoryMutation, 
+  useDeleteCategoryMutation, 
+  useGetCategoriesQuery, 
+  useUpdateCategoryMutation 
+} from "../../Redux/Apis/service/categoryApis";
+import { useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import CategoryTable from "./components/CategoryTable";
+import CategoryModal from "./components/CategoryModal";
 
-
-function Category() {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const [categories, setCategories] = React.useState([
-    {
-      key: "1",
-      name: "Vehicles",
-      image: Vehicles,
-    },
-    {
-      key: "2",
-      name: "Real Estate",
-      image: estate,
-    },
-    {
-      key: "3",
-      name: " Job Offers",
-      image: job,
-    },
-    {
-      key: "4",
-      name: "New & Used Products",
-      image: shope,
-    },
-    {
-      key: "5",
-      name: "Animals",
-      image: pet,
-    },
-    {
-      key: "6",
-      name: "Services",
-      image: service,
-    },
-  ]);
+const Category = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [fileList, setFileList] = useState([]);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingCategory, setEditingCategory] = useState(null);
+  
+  // API Hooks
+  const { data, isLoading } = useGetCategoriesQuery();
+  const [createCategory, { isLoading: isCreating }] = useCreateCategoryMutation();
+  const [updateCategory, { isLoading: isUpdating }] = useUpdateCategoryMutation();
+  const [deleteCategory] = useDeleteCategoryMutation();
+  
+  // State and Refs
+  const [categories, setCategories] = useState([]);
   const [form] = Form.useForm();
+  const navigate = useNavigate();
+  const params = useParams();
 
-  const columns = [
-    {
-      title: "Category Image",
-      dataIndex: "image",
-      key: "image",
-      render: (image) => (
-        <img
-          src={image}
-          alt="Category"
-          style={{ width: 50, height: 50, objectFit: "cover" }}
-        />
-      ),
-    },
-    {
-      title: "Category Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Sub Category",
-      dataIndex: "subCategory",
-      key: "subCategory",
-      render: (subCategory) => (
-        <span>
-          {Array.isArray(subCategory)
-            ? subCategory.join(", ")
-            : subCategory}
-        </span>
-      ),
-    },
-    {
-      title: "Actions",
-      key: "actions",
-      render: (_, record) => (
-        <Space size="middle">
-          <Button
-            type="primary"
-            style={{ backgroundColor: "#185F90", color: "white" }}
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          />
-          <Button
-            type="danger"
-            style={{ backgroundColor: "red", color: "white" }}
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record.key)}
-          />
-        </Space>
-      ),
-    },
-  ];
+  // Update categories when data is fetched
+  useEffect(() => {
+    if (data?.data?.result) {
+      const formattedCategories = data.data.result.map((category, index) => ({
+        key: category._id || index.toString(),
+        ...category,
+        createdAt: new Date(category.createdAt).toLocaleDateString(),
+        updatedAt: new Date(category.updatedAt).toLocaleDateString(),
+      }));
+      setCategories(formattedCategories);
+    }
+  }, [data]);
 
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    form.resetFields();
-  };
 
-  const handleOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        // Add new category to the list
-        const newCategory = {
-          key: Date.now(),
-          ...values,
-        };
-        setCategories([...categories, newCategory]);
-        message.success("Category created successfully");
-        setIsModalOpen(false);
-      })
-      .catch((info) => {
-        console.log("Validation failed:", info);
-      });
-  };
-
-  const handleDelete = (key) => {
-    Modal.confirm({
-      title: "Delete Confirmation",
-      content: "Are you sure you want to delete this category?",
-      onOk: () => {
-        setCategories(categories.filter((category) => category.key !== key));
-        message.success("Category deleted successfully");
-      },
-    });
-  };
 
   const handleEdit = (record) => {
-    form.setFieldsValue(record);
+    setIsEditing(true);
+    setEditingCategory(record);
+    form.setFieldsValue({ name: record.name });
+
+    // Set the existing image in fileList for display
+    if (record.category_image) {
+      setFileList([
+        {
+          uid: '-1',
+          name: 'current-image',
+          status: 'done',
+          url: record.category_image,
+        },
+      ]);
+    } else {
+      setFileList([]);
+    }
+
     setIsModalOpen(true);
+  };
+
+  const handleAddNew = () => {
+    setIsEditing(false);
+    setEditingCategory(null);
+    form.resetFields();
+    setFileList([]);
+    setIsModalOpen(true);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteCategory({ id }).unwrap().then((res) => {
+        if (res?.success) {
+          toast.success(res?.message);
+          // Only navigate if needed
+          if (params?.categoryId) {
+            navigate(`/dynamic-category/${params?.categoryId}`);
+          }
+        }
+      });
+    } catch (error) {
+      toast.error(error?.data?.message || 'Failed to delete category');
+    }
+  };
+
+  const handleSubmit = async (values) => {
+    try {
+      const formData = new FormData();
+      formData.append('name', values.name);
+
+      if (isEditing) {
+        const hasNewImage = fileList.some(file => file.originFileObj);
+        if (hasNewImage) {
+          const imageFile = fileList.find(file => file.originFileObj)?.originFileObj;
+          formData.append('category_image', imageFile);
+        }
+console.log(editingCategory)
+        await updateCategory({
+          id: editingCategory._id,
+          data: formData
+        }).unwrap().then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Category updated successfully!');
+            resetModal();
+          }
+        });
+
+      } else {
+        if (!fileList || fileList.length === 0) {
+          toast.error('Please upload an image!');
+          return;
+        }
+
+        const imageFile = fileList[0].originFileObj || fileList[0];
+        formData.append('category_image', imageFile);
+
+        await createCategory({ data: formData }).unwrap().then((res) => {
+          if (res?.success) {
+            toast.success(res?.message || 'Category created successfully!');
+            resetModal();
+          }
+        });
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(error?.data?.message || `Failed to ${isEditing ? 'update' : 'save'} category`);
+    }
+  };
+
+  const resetModal = () => {
+    form.resetFields();
+    setFileList([]);
+    setIsModalOpen(false);
+    setIsEditing(false);
+    setEditingCategory(null);
+    // Only navigate if needed
+    if (params?.categoryId) {
+      navigate(`/dynamic-category/${params?.categoryId}`);
+    }
+  };
+
+  const handleCancel = () => {
+    resetModal();
   };
 
   const beforeUpload = (file) => {
     const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
     if (!isJpgOrPng) {
       message.error("You can only upload JPG/PNG file!");
+      return false;
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
       message.error("Image must smaller than 2MB!");
+      return false;
     }
-    return isJpgOrPng && isLt2M;
+    return false; // Prevent automatic upload
   };
 
+  const handleUploadChange = ({ fileList: newFileList }) => {
+    setFileList(newFileList);
+  };
+
+
+
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Category Management</h1>
-      </div>
+    <div>
+      <CategoryTable 
+        categories={categories}
+        loading={isLoading}
+        onAddNew={handleAddNew}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
-      <Table columns={columns} dataSource={categories} pagination={false} />
-
-      <Modal
-        open={isModalOpen}
-        onOk={handleOk}
+      <CategoryModal
+        isModalOpen={isModalOpen}
+        isEditing={isEditing}
+        isSubmitting={isEditing ? isUpdating : isCreating}
+        form={form}
+        fileList={fileList}
         onCancel={handleCancel}
-        width={600}
-        okButtonProps={{
-          style: { backgroundColor: "#185F90", color: "white" },
-        }}
-        mask={true}
-      >
-        <Form
-          name="category"
-          requiredMark={false}
-          form={form}
-          layout="vertical"
-        >
-          <Form.Item
-            name="image"
-            label="Category Image"
-            rules={[{ required: true, message: "Please upload an image!" }]}
-          >
-            <Upload
-              name="image"
-              listType="picture-card"
-              beforeUpload={beforeUpload}
-              maxCount={1}
-            >
-              Upload
-            </Upload>
-          </Form.Item>
-
-          <Form.Item
-            name="name"
-            label="Category Name"
-            rules={[{ required: true, message: "Please enter category name!" }]}
-          >
-            <Input placeholder="Enter category name" />
-          </Form.Item>
-        </Form>
-      </Modal>
+        onFinish={handleSubmit}
+        onUploadChange={handleUploadChange}
+        beforeUpload={beforeUpload}
+      />
     </div>
   );
 }

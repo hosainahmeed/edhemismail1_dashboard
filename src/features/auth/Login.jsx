@@ -1,31 +1,30 @@
-import React from 'react';
-import { Form, Input, Button, Card, Checkbox } from 'antd';
+import React, { useState } from 'react';
+import { Form, Input, Button, Card } from 'antd';
 import 'antd/dist/reset.css';
 import { Link } from 'react-router-dom';
 import BrandLogo from '../../assets/brand-black.png';
-
+import toast from 'react-hot-toast';
+import { useLoginMutation } from '../../Redux/Apis/auth/loginApis';
 const Login = () => {
+  const [loginUser] = useLoginMutation();
   const onFinish = async (values) => {
     const data = { email: values.email, password: values.password };
-    window.location.href = '/';
-    // try {
-    //   localStorage.removeItem('accessToken');
-    //   const res = await loginUser({ data });
-    //   if (res?.data?.success) {
-    //     const accessToken = res?.data?.data?.accessToken;
-    //     if (accessToken) {
-    //       localStorage.setItem('accessToken', accessToken);
-    //       toast.success(res.data.message);
-    //       window.location.href = '/';
-    //     } else {
-    //       toast.error(res?.data?.message || 'Something went wrong');
-    //     }
-    //   } else {
-    //     toast.error(res?.error?.data?.message || 'Something went wrong');
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      await loginUser({ data }).unwrap().then((res) => {
+        if (res?.success) {
+          const accessToken = res?.data?.accessToken;
+          if (accessToken) {
+            localStorage.setItem('accessToken', accessToken);
+            toast.success(res?.message);
+            window.location.href = '/';
+          }
+        }
+      }).catch((error) => {
+        toast.error(error?.message || 'Something went wrong');
+      });
+    } catch (error) {
+      toast.error(error?.message || 'Something went wrong');
+    }
   };
 
   return (
@@ -53,6 +52,7 @@ const Login = () => {
           >
             <Input
               placeholder="exmple@gmail.com"
+              defaultValue={'maniksarker265@gmail.com'}
               type="email"
               style={{
                 width: '100%',
@@ -81,6 +81,7 @@ const Login = () => {
           >
             <Input.Password
               placeholder="Password"
+              defaultValue={'admin123'}
               style={{
                 width: '100%',
               }}
@@ -88,16 +89,6 @@ const Login = () => {
           </Form.Item>
 
           <div className="flex items-center justify-between">
-            <Form.Item
-              name="remember"
-              valuePropName="checked"
-              style={{
-                textAlign: 'start',
-              }}
-            >
-              <Checkbox>Remember me</Checkbox>
-            </Form.Item>
-
             <Link
               to="/auth/forgot-password"
               className="!text-[var(--primary-color)] hover:!underline"

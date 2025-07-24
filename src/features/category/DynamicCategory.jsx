@@ -1,136 +1,74 @@
-import { DeleteOutlined, EditOutlined, PlusCircleFilled } from "@ant-design/icons";
-import {
-  Button,
-  Form,
-  Input,
-  message,
-  Modal,
-  Space,
-  Table,
-  Upload,
-} from "antd";
-import React from "react";
-import { useNavigate, useParams } from 'react-router-dom';
-import Vehicles from "../../../public/categorise/car.png";
-const categories = [
-  {
-    _id: "1",
-    name: "Vehicles",
-    image: Vehicles,
-    sub_category: [
-      {
-        _id: "1-1",
-        name: "Cars",
-        sub_category: [
-          {
-            _id: "1-1-1",
-            name: "Sedan",
-            sub_category: [
-              {
-                _id: "1-1-1-1",
-                name: "Electric Sedan",
-                sub_category: [
-                  {
-                    _id: "1-1-1-1-1",
-                    name: "Tesla Model S",
-                    sub_category: [
-                      {
-                        _id: "1-1-1-1-1-1",
-                        name: "2024 Model",
-                        sub_category: []
-                      },
-                      {
-                        _id: "1-1-1-1-1-2",
-                        name: "2025 Model",
-                        sub_category: []
-                      }
-                    ]
-                  },
-                  {
-                    _id: "1-1-1-1-2",
-                    name: "Lucid Air",
-                    sub_category: []
-                  }
-                ]
-              }
-            ]
-          },
-          {
-            _id: "1-1-2",
-            name: "SUV",
-            sub_category: [
-              {
-                _id: "1-1-2-1",
-                name: "Off-Road SUV",
-                sub_category: [
-                  {
-                    _id: "1-1-2-1-1",
-                    name: "Jeep Wrangler",
-                    sub_category: []
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      {
-        _id: "1-2",
-        name: "Motorcycles",
-        sub_category: [
-          {
-            _id: "1-2-1",
-            name: "Sports Bike",
-            sub_category: [
-              {
-                _id: "1-2-1-1",
-                name: "Yamaha R1",
-                sub_category: []
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-];
-const DynamicCategory = () => {
-  const navigate = useNavigate();
-  let params = useParams()
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+import React, { useEffect, useMemo, useState } from 'react'
+import { Breadcrumb, Button, Popconfirm, Space, Table } from 'antd'
+import { useGetSubCategoriesQuery } from '../../Redux/Apis/service/categoryApis'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Modal } from 'antd'
+import { Form } from 'antd'
+import { Input } from 'antd'
+import { PlusCircleFilled } from '@ant-design/icons'
+import { message } from 'antd'
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
+import { useCreateCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation } from '../../Redux/Apis/service/categoryApis'
+import toast from 'react-hot-toast'
+import { FaArrowAltCircleLeft } from 'react-icons/fa'
 
-  const [form] = Form.useForm();
+function DynamicCategory() {
+  const params = useParams()
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [form] = Form.useForm()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingCategory, setEditingCategory] = useState(null) // Track if we're editing
+
+  const initialBreadcrumb = location.state?.breadcrumb || []
+  const [breadcrumb, setBreadcrumb] = useState(initialBreadcrumb)
+  const [createCategory, { isLoading: createCategoryLoading }] = useCreateCategoryMutation()
+  const [updateCategory, { isLoading: updateCategoryLoading }] = useUpdateCategoryMutation()
+  const [deleteCategory] = useDeleteCategoryMutation()
+  const queryParams = useMemo(() => ({ id: params?.categoryId }), [params?.categoryId])
+  const { data, isLoading, isFetching } = useGetSubCategoriesQuery(queryParams, {
+    skip: !params?.categoryId,
+    refetchOnMountOrArgChange: true
+  })
+
+  const handleEdit = (record) => {
+    setEditingCategory(record)
+    form.setFieldsValue(record)
+    setIsModalOpen(true)
+  }
+
+  const handleAdd = () => {
+    setEditingCategory(null)
+    form.resetFields()
+    setIsModalOpen(true)
+  }
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteCategory({ id }).unwrap().then((res) => {
+        if (res?.success) {
+          toast.success(res?.message)
+          navigate(`/dynamic-category/${params?.categoryId}`)
+        }
+      })
+    } catch (error) {
+      toast.error(error?.data?.message)
+    }
+  }
 
   const columns = [
     {
-      title: "Category Name",
+      title: "Name",
       dataIndex: "name",
       key: "name",
-    },
-    {
-      title: "Sub Category",
-      dataIndex: "sub_category",
-      key: "sub_category",
-      render: (sub_category) => {
-        return (
-          <>
-            {Array.isArray(sub_category)
-              ? sub_category.map((item) => (
-                <button onClick={() => navigate(`/dynamic-category/${item?._id}`)} style={{ margin: "0 5px" }} className='cursor-pointer'>
-                  {item.name}
-                </button>
-              ))
-              : null}
-            <Button
-              type="primary"
-              style={{ backgroundColor: "#185F90", color: "white" }}
-              icon={<PlusCircleFilled />}
-              onClick={() => handleEdit(record)}
-            />
-          </>
-
-        )
-      },
+      render: (text, record) => (
+        <a onClick={(e) => {
+          e.preventDefault()
+          handleDynamicAction(record)
+        }}>
+          {text}
+        </a>
+      ),
     },
     {
       title: "Actions",
@@ -143,118 +81,178 @@ const DynamicCategory = () => {
             icon={<EditOutlined />}
             onClick={() => handleEdit(record)}
           />
-          <Button
-            type="danger"
-            style={{ backgroundColor: "red", color: "white" }}
-            icon={<DeleteOutlined />}
-            onClick={() => handleDelete(record.key)}
-          />
+          <Popconfirm
+            title="Are you sure to delete this category?"
+            onConfirm={() => handleDelete(record._id)}>
+            <Button
+              type="danger"
+              style={{ backgroundColor: "red", color: "white" }}
+              icon={<DeleteOutlined />}
+            />
+          </Popconfirm>
         </Space>
       ),
-    },
-  ];
-
-  const handleCancel = () => {
-    setIsModalOpen(false);
-    form.resetFields();
-  };
-
-  const handleOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        // Add new category to the list
-        const newCategory = {
-          key: Date.now(),
-          ...values,
-        };
-        // setCategories([...categories, newCategory]);
-        message.success("Category created successfully");
-        setIsModalOpen(false);
-      })
-      .catch((info) => {
-        console.log("Validation failed:", info);
-      });
-  };
-
-  const handleDelete = (key) => {
-    Modal.confirm({
-      title: "Delete Confirmation",
-      content: "Are you sure you want to delete this category?",
-      onOk: () => {
-        // setCategories(categories.filter((category) => category.key !== key));
-        message.success("Category deleted successfully");
-      },
-    });
-  };
-
-  const handleEdit = (record) => {
-    form.setFieldsValue(record);
-    setIsModalOpen(true);
-  };
-
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-    if (!isJpgOrPng) {
-      message.error("You can only upload JPG/PNG file!");
     }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error("Image must smaller than 2MB!");
+  ]
+
+  const handleDynamicAction = (record) => {
+    const existingIndex = breadcrumb.findIndex(
+      item => item.categoryId === record._id
+    )
+
+    let newBreadcrumb
+    if (existingIndex >= 0) {
+      newBreadcrumb = breadcrumb.slice(0, existingIndex + 1)
+    } else {
+      newBreadcrumb = [
+        ...breadcrumb,
+        {
+          name: record.name,
+          categoryId: record._id,
+        }
+      ]
     }
-    return isJpgOrPng && isLt2M;
-  };
+
+    navigate(`/dynamic-category/${record._id}`, {
+      state: { breadcrumb: newBreadcrumb }
+    })
+  }
+
+  const handleBreadcrumbClick = (item, index) => {
+    const newBreadcrumb = breadcrumb.slice(0, index + 1)
+    const lastItem = newBreadcrumb[newBreadcrumb.length - 1]
+
+    navigate(`/dynamic-category/${lastItem.categoryId}`, {
+      state: { breadcrumb: newBreadcrumb }
+    })
+  }
+
+  useEffect(() => {
+    if (location.state?.breadcrumb) {
+      setBreadcrumb(location.state.breadcrumb)
+    }
+  }, [location.state])
+
+  const handleSubmit = async (values) => {
+    try {
+      if (editingCategory) {
+        // Update existing category
+        const data = {
+          id: editingCategory._id,
+          data: {
+            name: values.name,
+            parentCategory: params.categoryId
+          }
+        }
+        await updateCategory({ data }).unwrap().then((res) => {
+          if (res?.success) {
+            toast.success(res?.message)
+            setIsModalOpen(false)
+            setEditingCategory(null)
+            form.resetFields()
+          }
+        })
+      } else {
+        // Create new category
+        const data = { name: values.name, parentCategory: params.categoryId }
+        await createCategory({ data }).unwrap().then((res) => {
+          console.log("res",res)
+          if (res?.success) {
+            toast.success(res?.message)
+            setIsModalOpen(false)
+            form.resetFields()
+          }
+          else {
+            toast.error(res?.message)
+          }
+        })
+      }
+    } catch (error) {
+      console.log("error",error)
+      toast.error(error?.data?.message)
+    }
+  }
+
+  const handleModalCancel = () => {
+    setIsModalOpen(false)
+    setEditingCategory(null)
+    form.resetFields()
+  }
+
+  const handleBack = () => {
+    setBreadcrumb([])
+    navigate(`/category`)
+  }
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold">Category Management</h1>
+    <div>
+      <div className="flex items-center gap-2">
+        <FaArrowAltCircleLeft className='text-2xl cursor-pointer' onClick={() => handleBack()} />
+        <Breadcrumb>
+          {breadcrumb?.length > 0 ? breadcrumb.map((item, index) => (
+            <Breadcrumb.Item key={index}>
+              <a onClick={(e) => {
+                e.preventDefault()
+                handleBreadcrumbClick(item, index)
+              }}>
+                {item.name}
+              </a>
+            </Breadcrumb.Item>
+          )) : <Breadcrumb.Item>
+            <a onClick={(e) => {
+              e.preventDefault()
+              handleBack()
+            }}>
+              Category
+            </a>
+          </Breadcrumb.Item>}
+        </Breadcrumb>
       </div>
-
-      <Table columns={columns} dataSource={categories} pagination={false} />
-
+      <Button
+        type="primary"
+        style={{ backgroundColor: "#185F90", color: "white", marginBottom: "1rem", marginTop: "1rem", float: "right" }}
+        icon={<PlusCircleFilled />}
+        onClick={handleAdd}
+      >
+        Add Sub Category
+      </Button>
+      <Table
+        columns={columns}
+        loading={isLoading || isFetching}
+        dataSource={data?.data?.result || []}
+        rowKey="_id"
+      />
       <Modal
         open={isModalOpen}
-        onOk={handleOk}
-        onCancel={handleCancel}
+        destroyOnClose
+        footer={null}
+        onOk={() => setIsModalOpen(false)}
+        onCancel={handleModalCancel}
         width={600}
         okButtonProps={{
           style: { backgroundColor: "#185F90", color: "white" },
         }}
         mask={true}
+        title={editingCategory ? "Edit Sub Category" : "Add Sub Category"}
       >
-        <Form
-          name="category"
-          requiredMark={false}
-          form={form}
-          layout="vertical"
-        >
-          <Form.Item
-            name="image"
-            label="Category Image"
-            rules={[{ required: true, message: "Please upload an image!" }]}
-          >
-            <Upload
-              name="image"
-              listType="picture-card"
-              beforeUpload={beforeUpload}
-              maxCount={1}
-            >
-              Upload
-            </Upload>
-          </Form.Item>
-
+        <Form layout='vertical' form={form} requiredMark={false} onFinish={handleSubmit}>
           <Form.Item
             name="name"
-            label="Category Name"
-            rules={[{ required: true, message: "Please enter category name!" }]}
+            label="Name"
+            rules={[{ required: true, message: "Please enter name!" }]}
           >
-            <Input placeholder="Enter category name" />
+            <Input placeholder="Enter name" />
           </Form.Item>
+          <Button
+            loading={editingCategory ? updateCategoryLoading : createCategoryLoading}
+            htmlType='submit'
+          >
+            {editingCategory ? "Update" : "Submit"}
+          </Button>
         </Form>
       </Modal>
     </div>
-  );
+  )
 }
 
 export default DynamicCategory

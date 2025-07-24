@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 function StatusCard({ stats }) {
   return (
-    <div
+    <Link to={stats?.link}> <div
       style={{
         backgroundColor: 'var(--primary-color)',
       }}
@@ -24,6 +25,7 @@ function StatusCard({ stats }) {
         </div>
       </div>
     </div>
+    </Link>
   );
 }
 
