@@ -4,12 +4,14 @@ import { Button } from 'antd';
 import { FaCameraRetro } from 'react-icons/fa6';
 import ProfileEdit from '../../../Components/ProfilePage/ProfileEdit.jsx';
 import ChangePassword from '../../../Components/ProfilePage/ChangePassword.jsx';
-// import { imageUrl } from '../../../Utils/server.js';
+import { useGetProfileDataQuery } from '../../Redux/services/profileApis.js';
+import { imageUrl } from '../../utils/server.js';
 
 const Tabs = ['Edit Profile', 'Change Password'];
 
 const Profile = () => {
   const [tab, setTab] = useState(Tabs[0]);
+  const { data: profileData } = useGetProfileDataQuery({});
   const [image, setImage] = useState(null);
   const handleImageUpload = (e) => {
     if (e.target.files?.[0]) {
@@ -17,14 +19,15 @@ const Profile = () => {
       localStorage.setItem('image', e.target.files[0]);
     }
   };
-  // const profileImage = image
-  //   ? URL.createObjectURL(image)
-  //   : profileData?.data?.img
-  //   ? imageUrl(profileData.data.img)
-  //   : 'https://placehold.co/400';
+  console.log(profileData)
+  const profileImage = image
+    ? URL.createObjectURL(image)
+    : profileData?.data?.profile_image
+      ? imageUrl(profileData.data.profile_image)
+      : 'https://placehold.co/400';
   return (
     <>
-      <div className="container w-full mx-auto  p-4 rounded-md">
+      <div className="max-w-[700px] mx-auto  p-4 rounded-md">
         <div className="w-full flex items-center justify-center">
           <div
             onClick={() => {
@@ -36,7 +39,7 @@ const Profile = () => {
           >
             <img
               className="w-full h-full object-cover rounded-full"
-              src={'https://placehold.co/400'}
+              src={profileImage}
               alt="Profile"
             />
             {tab === 'Edit Profile' && (
@@ -60,20 +63,21 @@ const Profile = () => {
             />
           </div>
         </div>
-        <p className="text-2xl text-center text-black mt-2">User Name</p>
+        <p className="text-2xl text-center text-black mt-2">
+          {profileData?.data?.name || 'User Name'}
+        </p>
       </div>
 
       {/* Tabs Section */}
-      <div className="mx-auto p-1 border rounded-sm !w-fit center-center my-3">
+      <div className="mx-auto p-1 border rounded-sm !w-fit flex items-center justify-center my-3">
         {Tabs.map((item) => (
           <Button
             key={item}
             style={{ width: '200px', justifyContent: 'center' }}
-            className={`${
-              item === tab
+            className={`${item === tab
                 ? '!bg-[var(--primary-color)] !text-white !border-0 !rounded-sm'
                 : '!border-0 !rounded-none !text-black !border-black !bg-transparent'
-            }`}
+              }`}
             onClick={() => setTab(item)}
           >
             {item}
@@ -86,7 +90,7 @@ const Profile = () => {
           <ProfileEdit
             image={image}
             defaultImage={'https://placehold.co/400'}
-            data={{}}
+            data={profileData?.data}
           />
         ) : (
           <ChangePassword />

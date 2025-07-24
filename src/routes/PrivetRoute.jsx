@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useGetProfileDataQuery } from '../Redux/services/profileApis.jsx';
+import { useGetProfileDataQuery } from '../Redux/services/profileApis';
 const PrivateRoute = ({ children }) => {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [isLoading, setIsLoading] = useState(true);

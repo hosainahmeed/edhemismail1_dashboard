@@ -1,25 +1,24 @@
 import React from 'react';
-import { Avatar, Badge, Button, Dropdown, Image, Menu } from 'antd';
+import { Avatar, Dropdown, Image, Menu } from 'antd';
 import { UserOutlined, LogoutOutlined } from '@ant-design/icons';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import logo from '../../assets/brand-black.png';
-import { IoMdNotificationsOutline } from 'react-icons/io';
+import { useGetProfileDataQuery } from '../../Redux/services/profileApis';
 
 function Header() {
-  const navigate = useNavigate();
-  
-  // Dummy data
+  const { data, isLoading } = useGetProfileDataQuery()
+  if (isLoading) {
+    return <div className='w-full h-16 animate-pulse bg-gray-200' ></div>;
+  }
   const user = {
-    fullName: 'John Doe',
-    email: 'john.doe@example.com',
-    role: 'Admin',
-    img: 'https://picsum.photos/200/200?random=1'
+    fullName: data?.data?.fullName,
+    email: data?.data?.email,
+    img: data?.data?.profile_image
   };
-  
 
   const handleSignOut = () => {
     localStorage.removeItem('accessToken');
-    navigate('/auth/login');
+    window.location.href = '/';
   };
 
 
@@ -61,9 +60,6 @@ function Header() {
           </Dropdown>
           <div>
             <h1 className="text-sm font-normal text-black mb-0">{user?.fullName}</h1>
-            <div className="rounded-md flex items-center justify-center px-1 text-sm font-normal py-1 leading-3 bg-[#DCFCE7]">
-              {user?.role}
-            </div>
           </div>
         </div>
       </div>

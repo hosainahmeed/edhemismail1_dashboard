@@ -6,7 +6,7 @@ import BrandLogo from '../../assets/brand-black.png';
 import toast from 'react-hot-toast';
 import { useLoginMutation } from '../../Redux/Apis/auth/loginApis';
 const Login = () => {
-  const [loginUser] = useLoginMutation();
+  const [loginUser, { isLoading }] = useLoginMutation();
   const onFinish = async (values) => {
     const data = { email: values.email, password: values.password };
     try {
@@ -97,6 +97,7 @@ const Login = () => {
             </Link>
           </div>
           <Button
+            loading={isLoading}
             type="primary"
             htmlType="submit"
             className="w-full !bg-[var(--primary-color)] hover:!bg-[var(--primary-color)] !text-white"
