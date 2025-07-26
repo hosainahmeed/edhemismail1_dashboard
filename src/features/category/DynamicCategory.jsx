@@ -1,12 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Breadcrumb, Button, Popconfirm, Space, Table } from 'antd'
+import { Breadcrumb, Button, Popconfirm, Space, Table, Modal, Input, Form, Tag } from 'antd'
 import { useGetSubCategoriesQuery } from '../../Redux/Apis/service/categoryApis'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Modal } from 'antd'
-import { Form } from 'antd'
-import { Input } from 'antd'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { PlusCircleFilled } from '@ant-design/icons'
-import { message } from 'antd'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useCreateCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation } from '../../Redux/Apis/service/categoryApis'
 import toast from 'react-hot-toast'
@@ -30,7 +26,7 @@ function DynamicCategory() {
     skip: !params?.categoryId,
     refetchOnMountOrArgChange: true
   })
-
+  console.log(data)
   const handleEdit = (record) => {
     setEditingCategory(record)
     form.setFieldsValue(record)
@@ -69,6 +65,12 @@ function DynamicCategory() {
           {text}
         </a>
       ),
+    },
+    {
+      title: "Subcategories",
+      dataIndex: "totalSubcategory",
+      key: "totalSubcategory",
+      render: (count) => <Tag color={count > 0 ? "blue" : "default"}>{count}</Tag>,
     },
     {
       title: "Actions",
@@ -156,7 +158,7 @@ function DynamicCategory() {
         // Create new category
         const data = { name: values.name, parentCategory: params.categoryId }
         await createCategory({ data }).unwrap().then((res) => {
-          console.log("res",res)
+          console.log("res", res)
           if (res?.success) {
             toast.success(res?.message)
             setIsModalOpen(false)
@@ -168,7 +170,7 @@ function DynamicCategory() {
         })
       }
     } catch (error) {
-      console.log("error",error)
+      console.log("error", error)
       toast.error(error?.data?.message)
     }
   }

@@ -101,7 +101,6 @@ const Category = () => {
           const imageFile = fileList.find(file => file.originFileObj)?.originFileObj;
           formData.append('category_image', imageFile);
         }
-console.log(editingCategory)
         await updateCategory({
           id: editingCategory._id,
           data: formData
