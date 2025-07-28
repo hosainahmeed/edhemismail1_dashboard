@@ -44,7 +44,7 @@ const Profile = () => {
             {tab === 'Edit Profile' && (
               <button
                 aria-label="Edit Profile Picture"
-                className="absolute right-0 bottom-2 rounded-full bg-[var(--bg-green-high)]  p-2"
+                className="absolute right-0 bottom-2 rounded-full bg-[var(--primary-color)]  p-2"
               >
                 <FaCameraRetro
                   size={12}

@@ -38,7 +38,7 @@ const ProfileEdit = ({ image, data }) => {
   };
   return (
     <div>
-      <p className="text-[var(--bg-green-high)] text-3xl text-center">
+      <p className="text-[var(--primary-color)] text-3xl text-center">
         Edit Your Profile
       </p>
       <Form
@@ -74,7 +74,7 @@ const ProfileEdit = ({ image, data }) => {
           htmlType="submit"
           disabled={isProfileUpdate}
           style={{
-            backgroundColor: "var(--bg-green-high)",
+            backgroundColor: "var(--primary-color)",
             color: "#fff",
             height: 40,
           }}

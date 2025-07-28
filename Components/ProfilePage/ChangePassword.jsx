@@ -1,20 +1,28 @@
 import React from "react";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, Input, Spin } from "antd";
+import { useChangePasswordMutation } from "../../src/Redux/Apis/auth/changePasswordApis";
+import toast from "react-hot-toast";
 
 const ChangePassword = () => {
   const [form] = Form.useForm();
+  const [changePassword, { isLoading: isNewPassChange }] = useChangePasswordMutation();
 
   const onFinish = async (values) => {
+    console.log(values)
     const ChangePasswordDatas = {
       oldPassword: values.oldPassword,
       newPassword: values.newPassword,
-      confirmPassword: values.confirmPassword,
+      confirmNewPassword: values.confirmPassword,
     };
     try {
-      message.success("Password Changed successfully.");
+      await changePassword({ data: ChangePasswordDatas }).unwrap().then((res) => {
+        if (res?.data?.success) {
+          toast.success("Password Changed successfully.");
+        }
+      })
     } catch (error) {
       console.error("Failed to change password:", error);
-      message.error("Failed to change Password.");
+      toast.error("Failed to change Password.");
     }
   };
   return (
@@ -102,16 +110,15 @@ const ChangePassword = () => {
       <Button
         type="primary"
         htmlType="submit"
-        // disabled={isNewPassChange}
+        disabled={isNewPassChange}
         style={{
-          backgroundColor: "var(--bg-green-high)",
+          backgroundColor: "var(--primary-color)",
           color: "#fff",
           height: 40,
         }}
         className=" w-full"
       >
-        {/* {isNewPassChange ? <Spin /> : "Update password"} */}
-        update password
+        {isNewPassChange ? <Spin /> : "Update password"}
       </Button>
     </Form>
   );

@@ -19,6 +19,7 @@ import Terms from "../features/setting/Terms";
 import Support from "../features/support/Support";
 import AllUser from "../features/user/ui/AllUser";
 import PrivateRoute from "./PrivetRoute";
+import ManageAdmin from "../features/user/ui/ManageAdmin";
 export const Routes = createBrowserRouter([
   {
     path: "/",
@@ -31,6 +32,10 @@ export const Routes = createBrowserRouter([
       {
         path: "/user/all-user",
         element: <AllUser />,
+      },
+      {
+        path: "/manage-admin",
+        element: <ManageAdmin />,
       },
       {
         path: "/home-slides",

@@ -20,10 +20,12 @@ const Login = () => {
           }
         }
       }).catch((error) => {
-        toast.error(error?.message || 'Something went wrong');
+        console.log(error)
+        toast.error(error?.data?.message || 'Something went wrong');
       });
     } catch (error) {
-      toast.error(error?.message || 'Something went wrong');
+      console.log(error)
+      toast.error(error?.data?.message || 'Something went wrong');
     }
   };
 

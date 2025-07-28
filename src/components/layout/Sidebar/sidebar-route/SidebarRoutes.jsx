@@ -19,6 +19,12 @@ export const SidebarRoutes = [
     link: "/home-slides",
   },
   {
+    key: "manage-admin",
+    label: "Manage Admin",
+    icon: PiSlidersHorizontalBold,
+    link: "/manage-admin",
+  },
+  {
     key: "userManagement",
     label: "User management",
     icon: FaRegCircleUser,
