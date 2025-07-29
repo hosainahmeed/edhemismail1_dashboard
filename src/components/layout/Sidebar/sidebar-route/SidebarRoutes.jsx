@@ -4,6 +4,7 @@ import { FaCog, FaList } from "react-icons/fa";
 import { FaRegCircleUser } from "react-icons/fa6";
 import { BiCategory } from "react-icons/bi";
 import { PiSlidersHorizontalBold } from "react-icons/pi";
+import { RiAdminFill } from "react-icons/ri";
 
 export const SidebarRoutes = [
   {
@@ -21,7 +22,7 @@ export const SidebarRoutes = [
   {
     key: "manage-admin",
     label: "Manage Admin",
-    icon: PiSlidersHorizontalBold,
+    icon: RiAdminFill,
     link: "/manage-admin",
   },
   {

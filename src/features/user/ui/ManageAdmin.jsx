@@ -9,6 +9,7 @@ import {
     Form,
     Input,
     Popconfirm,
+    Spin,
 } from 'antd';
 import {
     UserOutlined,
@@ -20,105 +21,45 @@ import { FaRegCircle } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
 import CreateNewAdmin from './CreateNewAdmin.jsx';
 import UpdateAdminInformatio from './UpdateAdminInformatio';
-// import {
-//   useDeleteUserMutation,
-//   useGetAllUserQuery,
-//   useUpdateUserStatusMutation,
-// } from '../../../Redux/services/dashboard apis/userApis';
-// import { imageUrl } from '../../../utils/server';
 import { debounce } from 'lodash';
+import { useGetAdminsQuery, useDeleteAdminMutation } from '../../../Redux/Apis/service/adminApis.js';
 
 const ManageAdmin = () => {
     const [createNewAdminModal, setCreateNewAdminModal] = useState(false);
-    const [searchedUsers, setSearchedUsers] = useState();
+    const [searchedUsers, setSearchedUsers] = useState('');
     const [updateAdminInfo, setUpdateAdminInfo] = useState(false);
     const [selectAdmin, setSelectAdmin] = useState(null);
     const [selectedUser, setSelectedUser] = useState(null);
     const [userDetailsModal, setUserDetailsModal] = useState(false);
     const [page, setPage] = useState(1);
-
-    // Dummy data instead of API call
-    const adminsLoading = false;
-    const adminsData = {
-        data: [
-            {
-                _id: '1',
-                fullName: 'John Doe',
-                contactNo: '1234567890',
-                email: 'john@example.com',
-                approvalStatus: 'approved',
-                otpVerified: true,
-                preferedContactMethod: 'email',
-                address: '123 Main St',
-                proffession: 'Developer',
-                eldestRelative: 'Father',
-                familySide: 'Paternal',
-                subscription: 'Premium',
-                paymentStatus: 'paid',
-                img: 'avatar1.jpg',
-                role: 'admin',
-                status: 'active',
-                isDeleted: false,
-            },
-            {
-                _id: '2',
-                fullName: 'Jane Smith',
-                contactNo: '9876543210',
-                email: 'jane@example.com',
-                approvalStatus: 'approved',
-                otpVerified: true,
-                preferedContactMethod: 'phone',
-                address: '456 Oak Ave',
-                proffession: 'Designer',
-                eldestRelative: 'Mother',
-                familySide: 'Maternal',
-                subscription: 'Basic',
-                paymentStatus: 'paid',
-                img: 'avatar2.jpg',
-                role: 'admin',
-                status: 'active',
-                isDeleted: false,
-            },
-        ],
-        meta: {
-            limit: 10,
-            total: 2,
-        }
-    };
+    const [id, setId] = useState(null);
 
     // Commented out API hooks
-    // const { data: adminsData, isLoading: adminsLoading } = useGetAllUserQuery({
-    //   role: 'admin',
-    //   searchTerm: searchedUsers,
-    //   page,
-    //   limit: 10,
-    // });
+    const { data: adminsData, isLoading: adminsLoading, error } = useGetAdminsQuery({
+        searchTerm: searchedUsers,
+        page,
+        limit: 10,
+    });
 
-    // const [updateUserStatus] = useUpdateUserStatusMutation();
-    // const [deleteUser] = useDeleteUserMutation();
+    if (error) console.error('Error fetching admins:', error);
+    const [deleteUser, { isLoading: deleteLoading }] = useDeleteAdminMutation();
 
     const adminsInfo =
-        adminsData?.data?.map((item) => {
-            return {
-                key: item?._id,
-                name: item?.fullName,
-                contactNumber: item?.contactNo,
-                email: item?.email,
-                approvalStatus: item?.approvalStatus,
-                otpVerified: item?.otpVerified,
-                preferedContactMethod: item?.preferedContactMethod,
-                address: item?.address,
-                proffession: item?.proffession,
-                eldestRelative: item?.eldestRelative,
-                familySide: item?.familySide,
-                subscription: item?.subscription,
-                paymentStatus: item?.paymentStatus,
-                img: item?.img,
-                role: item?.role,
-                status: item?.status,
-                isDeleted: item?.isDeleted,
-            };
-        }) || [];
+        adminsData?.data?.result?.map((item) => ({
+            id: item?._id,
+            user: {
+                _id: item?.user?._id,
+                isBlocked: item?.user?.isBlocked,
+                isActive: item?.user?.isActive
+            },
+            name: item?.name,
+            email: item?.email,
+            profile_image: item?.profile_image,
+            isDeleted: item?.isDeleted,
+            phone: item?.phone,
+            createdAt: item?.createdAt,
+            updatedAt: item?.updatedAt
+        })) || [];
 
     const columns = [
         {
@@ -130,16 +71,11 @@ const ManageAdmin = () => {
                     <Avatar
                         size="small"
                         style={{ marginRight: 8 }}
-                        src={record.img} // Removed imageUrl function
+                        src={record?.profile_image}
                     />
                     <span>{text}</span>
                 </div>
             ),
-        },
-        {
-            title: 'Contact Number',
-            dataIndex: 'contactNumber',
-            key: 'contactNumber',
         },
         {
             title: 'Email',
@@ -159,7 +95,7 @@ const ManageAdmin = () => {
                         className="!bg-[var(--primary-color)]"
                         type="default"
                         icon={<UserOutlined className="!text-white" />}
-                        size="small"
+                        size="middle"
                     />
                     <Button
                         onClick={() => {
@@ -169,31 +105,35 @@ const ManageAdmin = () => {
                         className="!bg-[var(--primary-color)]"
                         type="default"
                         icon={<EditOutlined className="!text-white" />}
-                        size="small"
+                        size="middle"
                     />
                     <Popconfirm
                         title="Are you sure to delete this admin?"
-                        onConfirm={() => deleteHandler(record.key)}
+                        onConfirm={() => {
+                            setId(record?.id)
+                            deleteHandler(record?.id)
+                        }}
                     >
                         <Button
                             danger
                             type="default"
+                            loading={deleteLoading && record?.id === id}
                             icon={<DeleteOutlined />}
-                            size="small"
+                            size="middle"
                         />
                     </Popconfirm>
 
                     <Popconfirm
-                        title={`Are you sure to ${record?.status === 'active' ? 'block' : 'unblock'
+                        title={`Are you sure to ${record?.user?.isBlocked ? 'unblock' : 'block'
                             } this admin?`}
-                        onConfirm={() => blockUser(record)}
+                        onConfirm={() => blockUser(record?.user?.id)}
                     >
                         <Button
-                            className={`${record?.status === 'active' ? '!bg-green-200' : '!bg-red-300'
+                            className={`${record?.user?.isBlocked ? '!bg-red-200' : '!bg-green-300'
                                 } ant-btn ant-btn-default`}
                             type="default"
                             icon={<FaRegCircle />}
-                            size="small"
+                            size="middle"
                         />
                     </Popconfirm>
                 </Space>
@@ -203,51 +143,43 @@ const ManageAdmin = () => {
 
     const deleteHandler = (id) => {
         // Commented out actual API call
-        // try {
-        //   deleteUser({ id })
-        //     .unwrap()
-        //     .then((res) => {
-        //       if (res?.success) {
-        //         toast.success(res?.message || 'User deleted successfully!');
-        //       }
-        //     });
-        // } catch (error) {
-        //   toast.error(error?.data?.message || 'Something went wrong');
-        // }
-
-        // Dummy implementation
-        toast.success('Admin deleted successfully! (demo)');
-        console.log('Would delete admin with id:', id);
+        try {
+            deleteUser({ id })
+                .unwrap()
+                .then((res) => {
+                    if (res?.success) {
+                        toast.success(res?.message || 'User deleted successfully!');
+                    }
+                });
+        } catch (error) {
+            toast.error(error?.data?.message || 'Something went wrong');
+        }
     };
 
-    const blockUser = async (record) => {
-        // Commented out actual API call
-        // const id = record?.key;
+    const blockUser = async (id) => {
+        console.log(id)
         // const data = {
-        //   status: record?.status === 'active' ? 'blocked' : 'active',
+        //     status: record?.user?.isBlocked ? 'unblocked' : 'blocked',
         // };
         // try {
-        //   await updateUserStatus({ id, data })
-        //     .unwrap()
-        //     .then((res) => {
-        //       if (res?.success) {
-        //         toast.success(res?.message || 'User status updated successfully!');
-        //       }
-        //     });
+        //     await updateUserStatus({ id, data })
+        //         .unwrap()
+        //         .then((res) => {
+        //             if (res?.success) {
+        //                 toast.success(res?.message || 'User status updated successfully!');
+        //             }
+        //         });
         // } catch (error) {
-        //   toast.error(error?.data?.message || 'Something went wrong');
+        //     toast.error(error?.data?.message || 'Something went wrong');
         // }
 
-        // Dummy implementation
-        const newStatus = record?.status === 'active' ? 'blocked' : 'active';
-        toast.success(`Admin status changed to ${newStatus} (demo)`);
-        console.log('Would update status for:', record.key, 'to:', newStatus);
     };
 
     const handleSearch = debounce((value) => {
         setSearchedUsers(value);
-        console.log('Searching for:', value);
     }, 300);
+
+    console.log(adminsData)
 
     return (
         <div>
@@ -256,7 +188,6 @@ const ManageAdmin = () => {
                     <Form className="!w-full !h-fit">
                         <Form.Item>
                             <Input
-                                loading={adminsLoading}
                                 placeholder="Search by name"
                                 onChange={(e) => handleSearch(e.target.value)}
                                 allowClear
@@ -279,11 +210,13 @@ const ManageAdmin = () => {
                 loading={adminsLoading}
                 pagination={{
                     position: ['bottomCenter'],
-                    pageSize: adminsData?.meta?.limit,
-                    total: adminsData?.meta?.total,
+                    pageSize: adminsData?.data?.meta?.limit,
+                    total: adminsData?.data?.meta?.total,
                     onChange: (page) => setPage(page),
                     showSizeChanger: false,
                 }}
+                size="large"
+                scroll={{ x: 1000 }}
             />
 
             <Modal open={createNewAdminModal} footer={null} closeIcon={false}>
@@ -317,10 +250,6 @@ const ManageAdmin = () => {
                         <p className="font-semibold mt-2">Email</p>
                         <p className="p-2 border border-[#64748B] rounded-md">
                             {selectedUser?.email}
-                        </p>
-                        <p className="font-semibold mt-2">Phone Number</p>
-                        <p className="p-2 border border-[#64748B] rounded-md">
-                            {selectedUser?.contactNumber}
                         </p>
                     </div>
                 </div>

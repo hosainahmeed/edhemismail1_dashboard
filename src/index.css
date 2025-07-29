@@ -5,3 +5,12 @@
   --primary-color: #185F90;
   --secondary-color: #3A3A3A;
 }
+.ant-pagination-item{
+  border-radius: 100% !important;
+}
+.ant-pagination-item-active{
+  background-color: var(--primary-color) !important;
+}
+.ant-pagination-item-active a{
+  color: #fff !important;
+}

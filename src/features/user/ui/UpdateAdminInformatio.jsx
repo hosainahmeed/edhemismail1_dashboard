@@ -1,42 +1,33 @@
 import React from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import toast from 'react-hot-toast';
-// import { useUpdateAdminMutation } from '../../../Redux/services/dashboard apis/adminApis';
-
+import { useUpdateAdminMutation } from '../../../Redux/Apis/service/adminApis.js';
 function UpdateAdminInformatio({ adminData, closeModal }) {
-    // const [updateAdmin, { isLoading }] = useUpdateAdminMutation();
-    const isLoading = false; // Dummy loading state
+    const [updateUserStatus, { isLoading }] = useUpdateAdminMutation();
     const [form] = Form.useForm();
     const initialData = {
         fullName: adminData?.name,
         email: adminData?.email,
-        phoneNumber: adminData?.contactNumber,
     };
     const onFinish = async (values) => {
-        // Commented out actual API call
-        // const data = {
-        //     fullName: values?.fullName,
-        //     contactNo: values?.phoneNumber,
-        // };
-        // try {
-        //     await updateAdmin({
-        //         id: adminData?.key,
-        //         data,
-        //     })
-        //         .unwrap()
-        //         .then((res) => {
-        //             if (res?.success) {
-        //                 toast.success(res?.message || 'Admin updated successfully');
-        //                 closeModal();
-        //             }
-        //         });
-        // } catch (error) {
-        //     toast.error(error?.data?.message || 'Failed to update admin');
-        // }
-
-        // Dummy implementation
-        console.log('Would update admin with:', values);
-        toast.success('Admin updated successfully! (demo)');
+        try {
+            await updateUserStatus({
+                id: adminData?.id,
+                data: {
+                    name: values?.fullName,
+                    email: values?.email,
+                },
+            })
+                .unwrap()
+                .then((res) => {
+                    if (res?.success) {
+                        toast.success(res?.message || 'Admin updated successfully');
+                        closeModal();
+                    }
+                });
+        } catch (error) {
+            toast.error(error?.data?.message || 'Failed to update admin');
+        }
         closeModal();
     };
 
@@ -88,16 +79,6 @@ function UpdateAdminInformatio({ adminData, closeModal }) {
                         placeholder="Enter email"
                     />
                 </Form.Item>
-
-                <Form.Item
-                    name="phoneNumber"
-                    label="Phone Number"
-                    rules={[
-                        { required: true, message: 'Please input the phone number!' },
-                    ]}
-                >
-                    <Input placeholder="Please Input the Number" />
-                </Form.Item>
                 <div
                     style={{
                         display: 'flex',
@@ -112,6 +93,7 @@ function UpdateAdminInformatio({ adminData, closeModal }) {
                         Cancel
                     </Button>
                     <Button
+                        loading={isLoading}
                         className="!w-full !h-10 !text-white !bg-[var(--primary-color)]"
                         htmlType="submit"
                     >

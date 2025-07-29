@@ -1,39 +1,30 @@
 import React from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import toast from 'react-hot-toast';
-// import { useCreateAdminsMutation } from '../../../Redux/services/dashboard apis/adminApis';
+import { useCreateAdminMutation } from '../../../Redux/Apis/service/adminApis';
 
 function CreateNewAdmin({ closeModal }) {
-    // const [createAdmin, { isLoading }] = useCreateAdminsMutation();
-    const isLoading = false; // Dummy loading state
+    const [createAdmin, { isLoading }] = useCreateAdminMutation();
     const [form] = Form.useForm();
-    const initialData = {
-        fullName: '',
-        email: '',
-        phoneNumber: '',
-    };
     const onFinish = async (values) => {
-        // Commented out actual API call
-        // const data = { ...values, role: 'admin' };
-        // try {
-        //     await createAdmin({ data })
-        //         .unwrap()
-        //         .then((res) => {
-        //             if (res?.success) {
-        //                 toast.success(res?.message || 'Admin added successfully');
-        //                 form.resetFields();
-        //                 closeModal(false);
-        //             }
-        //         });
-        // } catch (error) {
-        //     toast.error(error?.data?.message || 'Something went wrong');
-        // }
-
-        // Dummy implementation
-        console.log('Would create admin with:', values);
-        toast.success('Admin created successfully! (demo)');
-        form.resetFields();
-        closeModal(false);
+        const data = {
+            name: values?.name,
+            email: values?.email,
+            password: values?.password,
+        };
+        try {
+            await createAdmin({ data })
+                .unwrap()
+                .then((res) => {
+                    if (res?.success) {
+                        toast.success(res?.message || 'Admin added successfully');
+                        form.resetFields();
+                        closeModal(false);
+                    }
+                });
+        } catch (error) {
+            toast.error(error?.data?.message || 'Something went wrong');
+        }
     };
 
     const onCancel = () => {
@@ -57,12 +48,11 @@ function CreateNewAdmin({ closeModal }) {
             <Form
                 form={form}
                 layout="vertical"
-                initialValues={initialData}
                 requiredMark={false}
                 onFinish={onFinish}
             >
                 <Form.Item
-                    name="fullName"
+                    name="name"
                     label="Full Name"
                     rules={[{ required: true, message: 'Please input the full name!' }]}
                 >
@@ -78,16 +68,6 @@ function CreateNewAdmin({ closeModal }) {
                     ]}
                 >
                     <Input placeholder="Enter email" />
-                </Form.Item>
-
-                <Form.Item
-                    name="contactNo"
-                    label="Phone Number"
-                    rules={[
-                        { required: true, message: 'Please input the phone number!' },
-                    ]}
-                >
-                    <Input placeholder="Please Input the phone number" />
                 </Form.Item>
                 <Divider />
                 <Form.Item
@@ -115,10 +95,11 @@ function CreateNewAdmin({ closeModal }) {
                         Cancel
                     </Button>
                     <Button
+                        loading={isLoading}
                         className="!w-full !h-10 !text-white !bg-[var(--primary-color)]"
                         htmlType="submit"
                     >
-                        {isLoading ? 'Adding...' : 'Add Admin'}
+                        {isLoading ? 'Creating...' : 'Create Admin'}
                     </Button>
                 </div>
             </Form>

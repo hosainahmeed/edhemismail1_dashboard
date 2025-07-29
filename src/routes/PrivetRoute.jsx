@@ -11,7 +11,7 @@ const PrivateRoute = ({ children }) => {
     const checkAuthorization = () => {
       const role = data?.data?.user?.role;
       try {
-        if (role === 'superAdmin') {
+        if (role === 'superAdmin' || role === 'admin') {
           setIsAuthorized(true);
         } else {
           setIsAuthorized(false);
