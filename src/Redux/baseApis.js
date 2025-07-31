@@ -1,16 +1,23 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
-const baseUrl = "http://10.10.11.15:5090";
+import { url } from "../utils/server";
 
 const baseApis = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: baseUrl,
+    baseUrl: url,
     headers: {
       Authorization: `${localStorage.getItem("accessToken")}`,
     },
   }),
-  tagTypes: ["Categories", "SubCategories", "Profile"],
+  tagTypes: [
+    "Categories",
+    "SubCategories",
+    "terms",
+    "privacyPolicy",
+    "Profile",
+    "users",
+    "banner",
+  ],
   endpoints: () => ({}),
 });
 

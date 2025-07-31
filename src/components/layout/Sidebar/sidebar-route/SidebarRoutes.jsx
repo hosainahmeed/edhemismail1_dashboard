@@ -86,11 +86,11 @@ export const SidebarRoutes = [
         label: "Privacy Policy",
         link: "/dashboard/Settings/PrivacyPolicy",
       },
-      {
-        key: "faq",
-        label: "FAQ",
-        link: "/dashboard/Settings/faq",
-      },
+      // {
+      //   key: "faq",
+      //   label: "FAQ",
+      //   link: "/dashboard/Settings/faq",
+      // },
       {
         key: "profile",
         label: "Profile",

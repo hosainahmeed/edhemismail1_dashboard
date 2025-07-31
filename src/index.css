@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "./styles/charts.css";
 
 :root {
   --primary-color: #185F90;
@@ -13,4 +12,8 @@
 }
 .ant-pagination-item-active a{
   color: #fff !important;
+}
+
+.jodit-wysiwyg{
+  height: calc(100vh - 250px) !important;
 }

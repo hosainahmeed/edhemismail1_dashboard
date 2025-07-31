@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { Form, Input, Button, Divider } from 'antd';
 import toast from 'react-hot-toast';
 import { useUpdateAdminMutation } from '../../../Redux/Apis/service/adminApis.js';
@@ -105,4 +105,4 @@ function UpdateAdminInformatio({ adminData, closeModal }) {
     );
 }
 
-export default UpdateAdminInformatio;
+export default memo(UpdateAdminInformatio);

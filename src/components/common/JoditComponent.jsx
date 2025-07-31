@@ -69,7 +69,7 @@ const JoditComponent = ({ content, setContent }) => {
   }
 
   return (
-    <div className="border rounded-lg overflow-hidden">{memoizedEditor}</div>
+    <div className="border h-[calc(100vh-250px)] rounded-lg overflow-hidden">{memoizedEditor}</div>
   );
 };
 

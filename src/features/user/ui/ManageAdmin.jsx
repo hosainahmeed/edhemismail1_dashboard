@@ -22,7 +22,7 @@ import toast from 'react-hot-toast';
 import CreateNewAdmin from './CreateNewAdmin.jsx';
 import UpdateAdminInformatio from './UpdateAdminInformatio';
 import { debounce } from 'lodash';
-import { useGetAdminsQuery, useDeleteAdminMutation } from '../../../Redux/Apis/service/adminApis.js';
+import { useGetAdminsQuery, useDeleteAdminMutation, useUpdateUserStatusMutation } from '../../../Redux/Apis/service/adminApis.js';
 
 const ManageAdmin = () => {
     const [createNewAdminModal, setCreateNewAdminModal] = useState(false);
@@ -43,6 +43,7 @@ const ManageAdmin = () => {
 
     if (error) console.error('Error fetching admins:', error);
     const [deleteUser, { isLoading: deleteLoading }] = useDeleteAdminMutation();
+    const [updateUserStatus, { isLoading: updateLoading }] = useUpdateUserStatusMutation()
 
     const adminsInfo =
         adminsData?.data?.result?.map((item) => ({
@@ -60,7 +61,7 @@ const ManageAdmin = () => {
             createdAt: item?.createdAt,
             updatedAt: item?.updatedAt
         })) || [];
-
+console.log(adminsData)
     const columns = [
         {
             title: 'Admin Name',
@@ -126,13 +127,14 @@ const ManageAdmin = () => {
                     <Popconfirm
                         title={`Are you sure to ${record?.user?.isBlocked ? 'unblock' : 'block'
                             } this admin?`}
-                        onConfirm={() => blockUser(record?.user?.id)}
+                        onConfirm={() => blockUser(record?.user?._id)}
                     >
                         <Button
                             className={`${record?.user?.isBlocked ? '!bg-red-200' : '!bg-green-300'
                                 } ant-btn ant-btn-default`}
                             type="default"
                             icon={<FaRegCircle />}
+                            loading={updateLoading && record?.user?._id === id}
                             size="middle"
                         />
                     </Popconfirm>
@@ -157,21 +159,17 @@ const ManageAdmin = () => {
     };
 
     const blockUser = async (id) => {
-        console.log(id)
-        // const data = {
-        //     status: record?.user?.isBlocked ? 'unblocked' : 'blocked',
-        // };
-        // try {
-        //     await updateUserStatus({ id, data })
-        //         .unwrap()
-        //         .then((res) => {
-        //             if (res?.success) {
-        //                 toast.success(res?.message || 'User status updated successfully!');
-        //             }
-        //         });
-        // } catch (error) {
-        //     toast.error(error?.data?.message || 'Something went wrong');
-        // }
+        try {
+            await updateUserStatus({ id })
+                .unwrap()
+                .then((res) => {
+                    if (res?.success) {
+                        toast.success(res?.message || 'User status updated successfully!');
+                    }
+                });
+        } catch (error) {
+            toast.error(error?.data?.message || 'Something went wrong');
+        }
 
     };
 

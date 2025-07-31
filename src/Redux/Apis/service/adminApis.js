@@ -37,6 +37,13 @@ const adminApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ["Admins"],
     }),
+    updateUserStatus: build.mutation({
+      query: ({ id }) => ({
+        url: `/user/block-unblock/${id}`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["Admins"],
+    }),
   }),
 });
 
@@ -45,4 +52,5 @@ export const {
   useCreateAdminMutation,
   useUpdateAdminMutation,
   useDeleteAdminMutation,
+  useUpdateUserStatusMutation,
 } = adminApis;
