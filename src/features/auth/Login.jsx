@@ -83,7 +83,7 @@ const Login = () => {
           >
             <Input.Password
               placeholder="Password"
-              defaultValue={'123456789'}
+              defaultValue={'admin123'}
               style={{
                 width: '100%',
               }}
