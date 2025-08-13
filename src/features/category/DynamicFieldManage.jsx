@@ -35,12 +35,11 @@ const DynamicFieldManage = ({ fieldModalOpen, setFieldModalOpen, initialValues, 
                     ? values.options || []
                     : []
             };
-            console.log("finalValues", finalValues);
-            setFieldModalOpen(false);
-            console.log("id", id)
             await createField({ data: finalValues, id }).unwrap().then((res) => {
                 if (res?.success) {
                     toast.success(res?.message)
+                    setFieldModalOpen(false)
+                    form.resetFields()
                 }
             })
         } catch (error) {

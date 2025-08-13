@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { Breadcrumb, Button, Popconfirm, Space, Table, Modal, Input, Form, Tag, Radio, Select, Tooltip } from 'antd'
 import { useGetSubCategoriesQuery } from '../../Redux/Apis/service/categoryApis'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { PlusCircleFilled, PlusOutlined } from '@ant-design/icons'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useCreateCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation } from '../../Redux/Apis/service/categoryApis'
@@ -176,7 +176,7 @@ function DynamicCategory() {
             name: values.name,
             parentCategory: params.categoryId,
             is_add_product: values.is_add_product,
-            is_parent_adding_product: values.is_parent_adding_product
+            is_parent_adding_product: !location?.state?.parent_active
           }
         }
         await updateCategory({ data, id: editingCategory._id }).unwrap().then((res) => {
@@ -193,7 +193,7 @@ function DynamicCategory() {
           name: values.name,
           parentCategory: params.categoryId,
           is_add_product: values.is_add_product,
-          is_parent_adding_product: values.is_parent_adding_product
+          is_parent_adding_product: location?.state?.parent_active ? true : false
         }
         await createCategory({ data }).unwrap().then((res) => {
           console.log("res", res)
@@ -220,13 +220,14 @@ function DynamicCategory() {
   }
 
   const handleBack = () => {
-    setBreadcrumb([])
-    navigate(`/category`)
+    // setBreadcrumb([])
+    navigate(-1)
   }
   return (
     <div>
       <div className="flex items-center gap-2">
         <FaArrowAltCircleLeft className='text-2xl cursor-pointer' onClick={() => handleBack()} />
+        {breadcrumb?.length > 0 && <Link className='text-sm text-[#8e8585]' to="/category">category</Link>}/
         <Breadcrumb>
           {breadcrumb?.length > 0 ? breadcrumb.map((item, index) => (
             <Breadcrumb.Item key={index}>
@@ -283,33 +284,16 @@ function DynamicCategory() {
             <Input placeholder="Enter name" />
           </Form.Item>
 
-          {!location?.state?.parent_active && <Form.Item
+          <Form.Item
             name="is_add_product"
             label={<p className='flex items-center gap-2'>Add Product<Tooltip placement="top" title="By yes , you are agreeing that this sub category can add dynamic fields" arrow={false}><FaCircleQuestion /></Tooltip></p>}
             rules={[{ required: true, message: "Please select an option!" }]}
           >
-            <Radio.Group defaultValue={true}>
-              <Radio value={true}>Yes</Radio>
-              <Radio value={false}>No</Radio>
-            </Radio.Group>
-          </Form.Item>}
-
-          <Form.Item
-            name="is_parent_adding_product"
-            label={<p className='flex items-center gap-2'>Parent Adding Product<Tooltip placement="top" title="By yes , you are agreeing that this parent category already has dynamic fields" arrow={false}><FaCircleQuestion /></Tooltip></p>}
-            rules={[
-              {
-                required: location?.state?.parent_active !== true,
-                message: "Please select an option!",
-              },
-            ]}
-          >
-            <Radio.Group defaultValue={location?.state?.parent_active} disabled={location?.state?.parent_active}>
+            <Radio.Group>
               <Radio value={true}>Yes</Radio>
               <Radio value={false}>No</Radio>
             </Radio.Group>
           </Form.Item>
-
           <Button
             loading={editingCategory ? updateCategoryLoading : createCategoryLoading}
             htmlType='submit'
