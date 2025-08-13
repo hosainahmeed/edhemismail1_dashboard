@@ -1,4 +1,4 @@
-import { Modal, Form, Input, Select, Checkbox, Radio, DatePicker, Upload, Button } from 'antd';
+import { Modal, Form, Input, Select, Checkbox, Radio, DatePicker, Upload, Button, Empty } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import React from 'react';
 import { useGetFieldsQuery } from '../../Redux/Apis/service/filedApis';
@@ -14,9 +14,17 @@ function ViewDynamicFieldManage({ viewFieldModalOpen, setViewFieldModalOpen, id 
         switch (type) {
             case 'text':
                 return (
-                    <Form.Item key={name} label={label} name={name} rules={rules}>
-                        <Input placeholder={`Enter ${label}`} />
-                    </Form.Item>
+                    <div>
+                        {
+                            label === 'location' ? (
+                                null
+                            ) : (
+                                <Form.Item key={name} label={label} name={name} rules={rules}>
+                                    <Input placeholder={`Enter ${label}`} />
+                                </Form.Item>
+                            )
+                        }
+                    </div>
                 );
 
             case 'number':
@@ -97,9 +105,15 @@ function ViewDynamicFieldManage({ viewFieldModalOpen, setViewFieldModalOpen, id 
             onCancel={() => setViewFieldModalOpen(false)}
             destroyOnClose
         >
-            <Form form={form} layout="vertical">
-                {data?.data?.map((field) => renderField(field))}
-            </Form>
+            {
+                data?.data?.length > 1 ? (
+                    <Form form={form} layout="vertical">
+                        {data?.data?.map((field) => renderField(field))}
+                    </Form>
+                ) : (
+                    <Empty description="No fields found" />
+                )
+            }
         </Modal>
     );
 }

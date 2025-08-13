@@ -77,6 +77,11 @@ function DynamicCategory() {
       render: (count) => <Tag color={count > 0 ? "blue" : "default"}>{count}</Tag>,
     },
     {
+      title: "Parent Category",
+      dataIndex: "parentCategory",
+      key: "parentCategory",
+    },
+    {
       title: "Actions",
       key: "actions",
       render: (_, record) => (
@@ -98,7 +103,6 @@ function DynamicCategory() {
           </Popconfirm>
           <Button
             type="primary"
-            style={{ backgroundColor: `${!record?.is_add_product ? "gray" : "#185F90"}`, color: "white" }}
             icon={<PlusOutlined />}
             onClick={() => handleAddFields(record._id)}
             disabled={!record?.is_add_product}
@@ -170,16 +174,10 @@ function DynamicCategory() {
     try {
       if (editingCategory) {
         // Update existing category
-        const data = {
-          id: editingCategory._id,
-          data: {
-            name: values.name,
-            parentCategory: params.categoryId,
-            is_add_product: values.is_add_product,
-            is_parent_adding_product: !location?.state?.parent_active
-          }
-        }
-        await updateCategory({ data, id: editingCategory._id }).unwrap().then((res) => {
+        const formData = new FormData()
+        formData.append('name', values.name)
+        formData.append('parentCategory', params?.categoryId)
+        await updateCategory({ data: formData, id: editingCategory?._id }).unwrap().then((res) => {
           if (res?.success) {
             toast.success(res?.message)
             setIsModalOpen(false)
@@ -189,14 +187,12 @@ function DynamicCategory() {
         })
       } else {
         // Create new category
-        const data = {
-          name: values.name,
-          parentCategory: params.categoryId,
-          is_add_product: values.is_add_product,
-          is_parent_adding_product: location?.state?.parent_active ? true : false
-        }
-        await createCategory({ data }).unwrap().then((res) => {
-          console.log("res", res)
+        const formData = new FormData()
+        formData.append('name', values.name)
+        formData.append('parentCategory', params?.categoryId)
+        formData.append('is_add_product', values.is_add_product)
+        formData.append('is_parent_adding_product', location?.state?.parent_active ? true : false)
+        await createCategory({ data: formData }).unwrap().then((res) => {
           if (res?.success) {
             toast.success(res?.message)
             setIsModalOpen(false)
@@ -284,7 +280,7 @@ function DynamicCategory() {
             <Input placeholder="Enter name" />
           </Form.Item>
 
-          <Form.Item
+          {!editingCategory && <Form.Item
             name="is_add_product"
             label={<p className='flex items-center gap-2'>Add Product<Tooltip placement="top" title="By yes , you are agreeing that this sub category can add dynamic fields" arrow={false}><FaCircleQuestion /></Tooltip></p>}
             rules={[{ required: true, message: "Please select an option!" }]}
@@ -293,7 +289,7 @@ function DynamicCategory() {
               <Radio value={true}>Yes</Radio>
               <Radio value={false}>No</Radio>
             </Radio.Group>
-          </Form.Item>
+          </Form.Item>}
           <Button
             loading={editingCategory ? updateCategoryLoading : createCategoryLoading}
             htmlType='submit'
