@@ -1,4 +1,5 @@
-export const url = "http://10.10.20.40:5090";
+// export const url = "http://10.10.20.40:5090";
+export const url = "http://10.10.20.9:5090";
 export const imageUrl = (image) => {
   return image
     ? image?.startsWith("http")

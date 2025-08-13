@@ -1,12 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Breadcrumb, Button, Popconfirm, Space, Table, Modal, Input, Form, Tag } from 'antd'
+import { Breadcrumb, Button, Popconfirm, Space, Table, Modal, Input, Form, Tag, Radio, Select, Tooltip } from 'antd'
 import { useGetSubCategoriesQuery } from '../../Redux/Apis/service/categoryApis'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { PlusCircleFilled } from '@ant-design/icons'
+import { PlusCircleFilled, PlusOutlined } from '@ant-design/icons'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
 import { useCreateCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation } from '../../Redux/Apis/service/categoryApis'
 import toast from 'react-hot-toast'
-import { FaArrowAltCircleLeft } from 'react-icons/fa'
+import { FaArrowAltCircleLeft, FaEye } from 'react-icons/fa'
+import DynamicFieldManage from './DynamicFieldManage'
+import { FaCircleQuestion } from 'react-icons/fa6'
+import ViewDynamicFieldManage from './ViewDynamicFieldManage'
 
 function DynamicCategory() {
   const params = useParams()
@@ -14,9 +17,11 @@ function DynamicCategory() {
   const navigate = useNavigate()
   const [form] = Form.useForm()
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [editingCategory, setEditingCategory] = useState(null) // Track if we're editing
-
-  const initialBreadcrumb = location.state?.breadcrumb || []
+  const [fieldModalOpen, setFieldModalOpen] = useState(false)
+  const [viewFieldModalOpen, setViewFieldModalOpen] = useState(false)
+  const [fieldId, setFieldId] = useState(null)
+  const [editingCategory, setEditingCategory] = useState(null)
+  const initialBreadcrumb = location?.state?.breadcrumb || []
   const [breadcrumb, setBreadcrumb] = useState(initialBreadcrumb)
   const [createCategory, { isLoading: createCategoryLoading }] = useCreateCategoryMutation()
   const [updateCategory, { isLoading: updateCategoryLoading }] = useUpdateCategoryMutation()
@@ -26,7 +31,7 @@ function DynamicCategory() {
     skip: !params?.categoryId,
     refetchOnMountOrArgChange: true
   })
-  console.log(data)
+
   const handleEdit = (record) => {
     setEditingCategory(record)
     form.setFieldsValue(record)
@@ -44,7 +49,6 @@ function DynamicCategory() {
       await deleteCategory({ id }).unwrap().then((res) => {
         if (res?.success) {
           toast.success(res?.message)
-          navigate(`/dynamic-category/${params?.categoryId}`)
         }
       })
     } catch (error) {
@@ -92,10 +96,38 @@ function DynamicCategory() {
               icon={<DeleteOutlined />}
             />
           </Popconfirm>
+          <Button
+            type="primary"
+            style={{ backgroundColor: `${!record?.is_add_product ? "gray" : "#185F90"}`, color: "white" }}
+            icon={<PlusOutlined />}
+            onClick={() => handleAddFields(record._id)}
+            disabled={!record?.is_add_product}
+          >
+            Add fields
+          </Button>
+          <Button
+            type="primary"
+            style={{ backgroundColor: `${!record?.is_add_product ? "gray" : "#185F90"}`, color: "white" }}
+            icon={<FaEye />}
+            onClick={() => handleViewFields(record._id)}
+            disabled={!record?.is_add_product}
+          >
+            View fields
+          </Button>
         </Space>
       ),
     }
   ]
+
+  const handleAddFields = (id) => {
+    setFieldModalOpen(true)
+    setFieldId(id)
+  }
+
+  const handleViewFields = (id) => {
+    setViewFieldModalOpen(true)
+    setFieldId(id)
+  }
 
   const handleDynamicAction = (record) => {
     const existingIndex = breadcrumb.findIndex(
@@ -114,9 +146,8 @@ function DynamicCategory() {
         }
       ]
     }
-
     navigate(`/dynamic-category/${record._id}`, {
-      state: { breadcrumb: newBreadcrumb }
+      state: { breadcrumb: newBreadcrumb, parent_active: record?.is_add_product }
     })
   }
 
@@ -143,10 +174,12 @@ function DynamicCategory() {
           id: editingCategory._id,
           data: {
             name: values.name,
-            parentCategory: params.categoryId
+            parentCategory: params.categoryId,
+            is_add_product: values.is_add_product,
+            is_parent_adding_product: values.is_parent_adding_product
           }
         }
-        await updateCategory({ data }).unwrap().then((res) => {
+        await updateCategory({ data, id: editingCategory._id }).unwrap().then((res) => {
           if (res?.success) {
             toast.success(res?.message)
             setIsModalOpen(false)
@@ -156,7 +189,12 @@ function DynamicCategory() {
         })
       } else {
         // Create new category
-        const data = { name: values.name, parentCategory: params.categoryId }
+        const data = {
+          name: values.name,
+          parentCategory: params.categoryId,
+          is_add_product: values.is_add_product,
+          is_parent_adding_product: values.is_parent_adding_product
+        }
         await createCategory({ data }).unwrap().then((res) => {
           console.log("res", res)
           if (res?.success) {
@@ -185,7 +223,6 @@ function DynamicCategory() {
     setBreadcrumb([])
     navigate(`/category`)
   }
-
   return (
     <div>
       <div className="flex items-center gap-2">
@@ -245,6 +282,34 @@ function DynamicCategory() {
           >
             <Input placeholder="Enter name" />
           </Form.Item>
+
+          {!location?.state?.parent_active && <Form.Item
+            name="is_add_product"
+            label={<p className='flex items-center gap-2'>Add Product<Tooltip placement="top" title="By yes , you are agreeing that this sub category can add dynamic fields" arrow={false}><FaCircleQuestion /></Tooltip></p>}
+            rules={[{ required: true, message: "Please select an option!" }]}
+          >
+            <Radio.Group defaultValue={true}>
+              <Radio value={true}>Yes</Radio>
+              <Radio value={false}>No</Radio>
+            </Radio.Group>
+          </Form.Item>}
+
+          <Form.Item
+            name="is_parent_adding_product"
+            label={<p className='flex items-center gap-2'>Parent Adding Product<Tooltip placement="top" title="By yes , you are agreeing that this parent category already has dynamic fields" arrow={false}><FaCircleQuestion /></Tooltip></p>}
+            rules={[
+              {
+                required: location?.state?.parent_active !== true,
+                message: "Please select an option!",
+              },
+            ]}
+          >
+            <Radio.Group defaultValue={location?.state?.parent_active} disabled={location?.state?.parent_active}>
+              <Radio value={true}>Yes</Radio>
+              <Radio value={false}>No</Radio>
+            </Radio.Group>
+          </Form.Item>
+
           <Button
             loading={editingCategory ? updateCategoryLoading : createCategoryLoading}
             htmlType='submit'
@@ -252,8 +317,10 @@ function DynamicCategory() {
             {editingCategory ? "Update" : "Submit"}
           </Button>
         </Form>
-      </Modal>
-    </div>
+      </Modal >
+      <DynamicFieldManage fieldModalOpen={fieldModalOpen} id={fieldId} setFieldModalOpen={setFieldModalOpen} />
+      <ViewDynamicFieldManage viewFieldModalOpen={viewFieldModalOpen} id={fieldId} setViewFieldModalOpen={setViewFieldModalOpen} />
+    </div >
   )
 }
 
