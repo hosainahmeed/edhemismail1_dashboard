@@ -20,6 +20,8 @@ import Support from "../features/support/Support";
 import AllUser from "../features/user/ui/AllUser";
 import PrivateRoute from "./PrivetRoute";
 import ManageAdmin from "../features/user/ui/ManageAdmin";
+import ProductCategorise from "../features/products/ProductCategorise";
+import ProductBycategory from "../features/products/ProductBycategory";
 export const Routes = createBrowserRouter([
   {
     path: "/",
@@ -32,6 +34,14 @@ export const Routes = createBrowserRouter([
       {
         path: "/user/all-user",
         element: <AllUser />,
+      },
+      {
+        path: "/product",
+        element: <ProductCategorise />,
+      },
+      {
+        path: "/product/:categoryId",
+        element: <ProductBycategory />,
       },
       {
         path: "/manage-admin",

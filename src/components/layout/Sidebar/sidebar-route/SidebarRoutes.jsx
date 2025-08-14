@@ -5,6 +5,7 @@ import { FaRegCircleUser } from "react-icons/fa6";
 import { BiCategory } from "react-icons/bi";
 import { PiSlidersHorizontalBold } from "react-icons/pi";
 import { RiAdminFill } from "react-icons/ri";
+import { AiFillProduct } from "react-icons/ai";
 
 export const SidebarRoutes = [
   {
@@ -30,6 +31,12 @@ export const SidebarRoutes = [
     label: "User management",
     icon: FaRegCircleUser,
     link: "/user/all-user",
+  },
+  {
+    key: "product",
+    label: "Product",
+    icon: AiFillProduct,
+    link: "/product",
   },
   {
     key: "listings",

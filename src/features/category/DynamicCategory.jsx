@@ -1,15 +1,19 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { Breadcrumb, Button, Popconfirm, Space, Table, Modal, Input, Form, Tag, Radio, Select, Tooltip } from 'antd'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { Breadcrumb, Button, Popconfirm, Space, Table, Form, Tag, Tooltip } from 'antd'
 import { useGetSubCategoriesQuery } from '../../Redux/Apis/service/categoryApis'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { PlusCircleFilled, PlusOutlined } from '@ant-design/icons'
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons'
-import { useCreateCategoryMutation, useUpdateCategoryMutation, useDeleteCategoryMutation } from '../../Redux/Apis/service/categoryApis'
+import {
+  useCreateCategoryMutation,
+  useUpdateCategoryMutation,
+  useDeleteCategoryMutation
+} from '../../Redux/Apis/service/categoryApis'
 import toast from 'react-hot-toast'
-import { FaArrowAltCircleLeft, FaEye } from 'react-icons/fa'
+import { FaArrowAltCircleLeft, FaCopy, FaEye } from 'react-icons/fa'
 import DynamicFieldManage from './DynamicFieldManage'
-import { FaCircleQuestion } from 'react-icons/fa6'
 import ViewDynamicFieldManage from './ViewDynamicFieldManage'
+import ManageDynamicCategory from './ManageDynamicCategory'
 
 function DynamicCategory() {
   const params = useParams()
@@ -86,6 +90,54 @@ function DynamicCategory() {
       key: "actions",
       render: (_, record) => (
         <Space size="middle">
+          <Tooltip title="Copy the category id">
+            <Button
+              type="primary"
+              style={{ backgroundColor: "#185F90", color: "white" }}
+              icon={<FaCopy />}
+              onClick={async () => {
+                const textToCopy = record?._id;
+                if (!textToCopy) {
+                  toast.error("No ID to copy");
+                  return;
+                }
+
+                if (navigator.clipboard && window.isSecureContext) {
+                  try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    toast.dismiss()
+                    toast.success("Id Copied to clipboard");
+                    return;
+                  } catch (err) {
+                    toast.dismiss()
+                    toast.error("Failed to copy");
+                    console.error("Clipboard API failed, falling back...", err);
+                  }
+                }
+
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+                textArea.style.position = "fixed";
+                textArea.style.left = "-9999px";
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+
+                try {
+                  document.execCommand("copy");
+                  toast.dismiss()
+                  toast.success("Id Copied to clipboard");
+                } catch (err) {
+                  toast.dismiss()
+                  toast.error("Failed to copy");
+                  console.error("Fallback copy failed:", err);
+                } finally {
+                  document.body.removeChild(textArea);
+                }
+              }}
+            />
+          </Tooltip>
+
           <Button
             type="primary"
             style={{ backgroundColor: "#185F90", color: "white" }}
@@ -102,19 +154,20 @@ function DynamicCategory() {
             />
           </Popconfirm>
           <Button
+            style={{ backgroundColor: `${record?.is_add_product === false ? "gray" : "#185F90"}`, color: "white" }}
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => handleAddFields(record._id)}
-            disabled={!record?.is_add_product}
+            disabled={record?.is_add_product === false}
           >
             Add fields
           </Button>
           <Button
             type="primary"
-            style={{ backgroundColor: `${!record?.is_add_product ? "gray" : "#185F90"}`, color: "white" }}
+            style={{ backgroundColor: `${record?.is_add_product === false ? "gray" : "#185F90"}`, color: "white" }}
             icon={<FaEye />}
             onClick={() => handleViewFields(record._id)}
-            disabled={!record?.is_add_product}
+            disabled={record?.is_add_product === false}
           >
             View fields
           </Button>
@@ -151,7 +204,7 @@ function DynamicCategory() {
       ]
     }
     navigate(`/dynamic-category/${record._id}`, {
-      state: { breadcrumb: newBreadcrumb, parent_active: record?.is_add_product }
+      state: { breadcrumb: newBreadcrumb }
     })
   }
 
@@ -192,6 +245,11 @@ function DynamicCategory() {
         formData.append('parentCategory', params?.categoryId)
         formData.append('is_add_product', values.is_add_product)
         formData.append('is_parent_adding_product', location?.state?.parent_active ? true : false)
+        console.log("parent_active", location?.state?.parent_active)
+        if (data?.data?.main_category?.is_add_product === true) {
+          formData.delete('is_add_product')
+        }
+
         await createCategory({ data: formData }).unwrap().then((res) => {
           if (res?.success) {
             toast.success(res?.message)
@@ -209,16 +267,15 @@ function DynamicCategory() {
     }
   }
 
-  const handleModalCancel = () => {
+  const handleModalCancel = useCallback(() => {
     setIsModalOpen(false)
     setEditingCategory(null)
     form.resetFields()
-  }
+  }, [form])
 
-  const handleBack = () => {
-    // setBreadcrumb([])
+  const handleBack = useCallback(() => {
     navigate(-1)
-  }
+  }, [navigate])
   return (
     <div>
       <div className="flex items-center gap-2">
@@ -258,48 +315,28 @@ function DynamicCategory() {
         dataSource={data?.data?.result || []}
         rowKey="_id"
       />
-      <Modal
-        open={isModalOpen}
-        destroyOnClose
-        footer={null}
-        onOk={() => setIsModalOpen(false)}
-        onCancel={handleModalCancel}
-        width={600}
-        okButtonProps={{
-          style: { backgroundColor: "#185F90", color: "white" },
-        }}
-        mask={true}
-        title={editingCategory ? "Edit Sub Category" : "Add Sub Category"}
-      >
-        <Form layout='vertical' form={form} requiredMark={false} onFinish={handleSubmit}>
-          <Form.Item
-            name="name"
-            label="Name"
-            rules={[{ required: true, message: "Please enter name!" }]}
-          >
-            <Input placeholder="Enter name" />
-          </Form.Item>
 
-          {!editingCategory && <Form.Item
-            name="is_add_product"
-            label={<p className='flex items-center gap-2'>Add Product<Tooltip placement="top" title="By yes , you are agreeing that this sub category can add dynamic fields" arrow={false}><FaCircleQuestion /></Tooltip></p>}
-            rules={[{ required: true, message: "Please select an option!" }]}
-          >
-            <Radio.Group>
-              <Radio value={true}>Yes</Radio>
-              <Radio value={false}>No</Radio>
-            </Radio.Group>
-          </Form.Item>}
-          <Button
-            loading={editingCategory ? updateCategoryLoading : createCategoryLoading}
-            htmlType='submit'
-          >
-            {editingCategory ? "Update" : "Submit"}
-          </Button>
-        </Form>
-      </Modal >
-      <DynamicFieldManage fieldModalOpen={fieldModalOpen} id={fieldId} setFieldModalOpen={setFieldModalOpen} />
-      <ViewDynamicFieldManage viewFieldModalOpen={viewFieldModalOpen} id={fieldId} setViewFieldModalOpen={setViewFieldModalOpen} />
+      <ManageDynamicCategory
+        form={form}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        editingCategory={editingCategory}
+        is_add_product={data?.data?.main_category?.is_add_product}
+        handleSubmit={handleSubmit}
+        updateCategoryLoading={updateCategoryLoading}
+        createCategoryLoading={createCategoryLoading}
+        handleModalCancel={handleModalCancel}
+      />
+      <DynamicFieldManage
+        fieldModalOpen={fieldModalOpen}
+        id={fieldId}
+        setFieldModalOpen={setFieldModalOpen}
+      />
+      <ViewDynamicFieldManage
+        viewFieldModalOpen={viewFieldModalOpen}
+        id={fieldId}
+        setViewFieldModalOpen={setViewFieldModalOpen}
+      />
     </div >
   )
 }

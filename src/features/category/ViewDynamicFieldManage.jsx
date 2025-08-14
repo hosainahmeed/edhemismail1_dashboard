@@ -9,38 +9,25 @@ function ViewDynamicFieldManage({ viewFieldModalOpen, setViewFieldModalOpen, id 
 
     const renderField = (field) => {
         const { type, label, name, options = [], is_required } = field;
-        const rules = [{ required: is_required, message: `${label} is required` }];
 
+        if (label?.toLowerCase() === "location") {
+            return null;
+        }
+
+        const rules = [{ required: is_required, message: `${label} is required` }];
         switch (type) {
             case 'text':
                 return (
-                    <div>
-                        {
-                            label === 'location' ? (
-                                null
-                            ) : (
-                                <Form.Item key={name} label={label} name={name} rules={rules}>
-                                    <Input placeholder={`Enter ${label}`} />
-                                </Form.Item>
-                            )
-                        }
-                    </div>
+                    <Form.Item key={name} label={label} name={name} rules={rules}>
+                        <Input placeholder={`Enter ${label}`} />
+                    </Form.Item>
                 );
-
             case 'number':
                 return (
                     <Form.Item key={name} label={label} name={name} rules={rules}>
                         <Input type="number" placeholder={`Enter ${label}`} />
                     </Form.Item>
                 );
-
-            case 'date':
-                return (
-                    <Form.Item key={name} label={label} name={name} rules={rules}>
-                        <DatePicker style={{ width: '100%' }} />
-                    </Form.Item>
-                );
-
             case 'select':
                 return (
                     <Form.Item key={name} label={label} name={name} rules={rules}>
@@ -53,14 +40,12 @@ function ViewDynamicFieldManage({ viewFieldModalOpen, setViewFieldModalOpen, id 
                         </Select>
                     </Form.Item>
                 );
-
-            case 'checkbox':
-                return (
-                    <Form.Item key={name} label={label} name={name} rules={rules}>
-                        <Checkbox.Group options={options} />
-                    </Form.Item>
-                );
-
+            // case 'checkbox':
+            //     return (
+            //         <Form.Item key={name} label={label} name={name} rules={rules}>
+            //             <Checkbox.Group options={options} />
+            //         </Form.Item>
+            //     );
             case 'radio':
                 return (
                     <Form.Item key={name} label={label} name={name} rules={rules}>
@@ -73,7 +58,6 @@ function ViewDynamicFieldManage({ viewFieldModalOpen, setViewFieldModalOpen, id 
                         </Radio.Group>
                     </Form.Item>
                 );
-
             case 'file':
                 return (
                     <Form.Item
@@ -89,11 +73,11 @@ function ViewDynamicFieldManage({ viewFieldModalOpen, setViewFieldModalOpen, id 
                         </Upload>
                     </Form.Item>
                 );
-
             default:
                 return null;
         }
     };
+
 
     return (
         <Modal
@@ -106,7 +90,7 @@ function ViewDynamicFieldManage({ viewFieldModalOpen, setViewFieldModalOpen, id 
             destroyOnClose
         >
             {
-                data?.data?.length > 1 ? (
+                data?.data?.length > 0 ? (
                     <Form form={form} layout="vertical">
                         {data?.data?.map((field) => renderField(field))}
                     </Form>

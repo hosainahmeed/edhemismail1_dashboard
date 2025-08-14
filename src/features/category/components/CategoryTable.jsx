@@ -30,7 +30,9 @@ const CategoryTable = ({
       title: "Name",
       dataIndex: "name",
       key: "name",
-      render: (text, record) => <Link to={`/dynamic-category/${record._id}`} state={{ breadcrumb: [{ name: record.name, categoryId: record._id }] }}>{text}</Link>,
+      render: (text, record) => <Link to={`/dynamic-category/${record._id}`}
+        state={{ breadcrumb: [{ name: record.name, categoryId: record._id }] }}
+      >{text}</Link>,
     },
     {
       title: "Subcategories",

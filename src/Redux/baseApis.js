@@ -18,6 +18,7 @@ const baseApis = createApi({
     "users",
     "banner",
     "Fields",
+    "Products",
   ],
   endpoints: () => ({}),
 });
