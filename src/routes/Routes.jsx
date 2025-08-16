@@ -35,10 +35,10 @@ export const Routes = createBrowserRouter([
         path: "/user/all-user",
         element: <AllUser />,
       },
-      {
-        path: "/product",
-        element: <ProductCategorise />,
-      },
+      // {
+      //   path: "/product",
+      //   element: <ProductCategorise />,
+      // },
       {
         path: "/product/:categoryId",
         element: <ProductBycategory />,
