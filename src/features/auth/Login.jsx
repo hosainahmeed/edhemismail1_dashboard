@@ -99,6 +99,7 @@ const Login = () => {
             </Link>
           </div>
           <Button
+            size='large'
             loading={isLoading}
             type="primary"
             htmlType="submit"

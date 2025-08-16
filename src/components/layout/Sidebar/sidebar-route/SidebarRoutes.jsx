@@ -32,12 +32,12 @@ export const SidebarRoutes = [
     icon: FaRegCircleUser,
     link: "/user/all-user",
   },
-  {
-    key: "product",
-    label: "Product",
-    icon: AiFillProduct,
-    link: "/product",
-  },
+  // {
+  //   key: "product",
+  //   label: "Product",
+  //   icon: AiFillProduct,
+  //   link: "/product",
+  // },
   {
     key: "listings",
     label: "Listings",
